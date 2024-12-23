@@ -1,7 +1,7 @@
 package bgu.spl.mics.application.services;
 
+import bgu.spl.mics.application.objects.*;
 import bgu.spl.mics.MicroService;
-
 /**
  * CameraService is responsible for processing data from the camera and
  * sending DetectObjectsEvents to LiDAR workers.

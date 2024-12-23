@@ -1,5 +1,11 @@
 package bgu.spl.mics.application;
 
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
+
+import bgu.spl.mics.MicroService;
+
 /**
  * The main entry point for the GurionRock Pro Max Ultra Over 9000 simulation.
  * <p>
@@ -18,7 +24,8 @@ public class GurionRockRunner {
      */
     public static void main(String[] args) {
         System.out.println("Hello World!");
-
+        LinkedBlockingQueue test = new LinkedBlockingQueue<MicroService>();
+        System.out.println(test.remainingCapacity());
         // TODO: Parse configuration file.
         // TODO: Initialize system components and services.
         // TODO: Start the simulation.
