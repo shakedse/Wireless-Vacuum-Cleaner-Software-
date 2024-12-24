@@ -36,24 +36,13 @@ public class MessageBusImpl implements MessageBus {
 	// A ms entering a queue of a certin event class
 	@Override
 	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
-		eventSubscribers.putIfAbsent(type, new LinkedBlockingQueue<MicroService>());// Adding an event to the queue if doent exist 
-		// Add the MicroService to the queue if it's not already present
-		BlockingQueue<MicroService> subscribersQueue = eventSubscribers.get(type);
-		if (!subscribersQueue.contains(m)) {
-			subscribersQueue.add(m);
-		}
+		eventSubscribers.computeIfAbsent(type, subscribersQueue -> new LinkedBlockingQueue<MicroService>()).add(m);// Adding an event to the queue if doesnt exists
 	}
 
 	@Override
 	public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) 
 	{
-		broadcastSubscribers.putIfAbsent(type, new LinkedBlockingQueue<MicroService>());// Adding an event to the queue if doesnt exists
-		//Add the MicroService to the queue if it's not already present
-		BlockingQueue<MicroService> subscribersQueue = broadcastSubscribers.get(type);
-		if (!subscribersQueue.contains(m)) 
-		{
-			subscribersQueue.add(m);
-		} 
+		broadcastSubscribers.computeIfAbsent(type, subscribersQueue -> new LinkedBlockingQueue<MicroService>()).add(m);// Adding an event to the queue if doesnt exists
 	}
 
 	@Override
