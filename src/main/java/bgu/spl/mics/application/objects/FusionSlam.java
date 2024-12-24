@@ -5,9 +5,16 @@ package bgu.spl.mics.application.objects;
  * Combines data from multiple sensors (e.g., LiDAR, camera) to build and update a global map.
  * Implements the Singleton pattern to ensure a single instance of FusionSlam exists.
  */
-public class FusionSlam {
+public class FusionSlam 
+{
+
     // Singleton instance holder
-    private static class FusionSlamHolder {
+    //fields:
+    private 
+
+
+    private static class FusionSlamHolder
+     {
         // TODO: Implement singleton instance logic.
     }
 }

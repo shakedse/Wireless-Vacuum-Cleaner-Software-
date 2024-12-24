@@ -3,6 +3,8 @@ package bgu.spl.mics;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 
+import bgu.spl.mics.application.messages.TerminatedBroadcast;
+
 /**
  * The MicroService is an abstract class that any micro-service in the system
  * must extend. The abstract MicroService class is responsible to get and
@@ -140,6 +142,7 @@ public abstract class MicroService implements Runnable {
      * message.
      */
     protected final void terminate() {
+        sendBroadcast(new TerminatedBroadcast(this)); // when this microService is terminated tell all others
         this.terminated = true;
     }
 

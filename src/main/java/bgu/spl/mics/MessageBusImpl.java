@@ -19,7 +19,7 @@ public class MessageBusImpl implements MessageBus {
 	private ConcurrentHashMap<Class<? extends Event<?>>, BlockingQueue<MicroService>> eventSubscribers;// map for event subscribers
 	private ConcurrentHashMap<Class<? extends Broadcast>, BlockingQueue<MicroService>> broadcastSubscribers;// map for broadcasts
 	private ConcurrentHashMap<Event<?>,Future<?>> EventAndFuture;
-
+	
 	private MessageBusImpl() //A private constructor
 	{
         eventSubscribers = new ConcurrentHashMap<>();
