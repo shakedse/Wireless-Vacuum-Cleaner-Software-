@@ -11,12 +11,18 @@ public class Pose {
     private float x;
     private float y;
     private float yaw;
-    private int Time;
+    private int time;
 
-    public Pose (float x,float y,float yaw)
+    public Pose (float x,float y,float yaw, int time)
     {
         this.x=x;
         this.y=y;
         this.yaw=yaw;
+        this.time = time;
+    }
+
+    public int getTime()
+    {
+        return time;
     }
 }

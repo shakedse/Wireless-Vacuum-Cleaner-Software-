@@ -1,7 +1,10 @@
 package bgu.spl.mics.application.objects;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Represents a camera sensor on the robot.
@@ -14,24 +17,28 @@ public class Camera
     private int id;
     private int frequency;
     private STATUS status;
-    private List<StampedDetectedObjects> stampDetectedObjects;
+    private LinkedList<StampedDetectedObjects> stampDetectedObjects;
 
     public Camera (int id, int frequency)
     {
         this.id=id;
         this.frequency=frequency;
         this.status=STATUS.DOWN;
-        this.stampDetectedObjects = new CopyOnWriteArrayList <StampedDetectedObjects>();//?????
+        this.stampDetectedObjects = new LinkedList<StampedDetectedObjects>();//?????
     }
 
     public int getFrequency()
     {
         return frequency;
     }
-
-    public CopyOnWriteArrayList<DetectedObject> getDetectedObjectsAtTick(int tick)
+    public int getID()
     {
-        CopyOnWriteArrayList<DetectedObject> DetectedObjectsAtTick = new CopyOnWriteArrayList<DetectedObject>();
+        return id;
+    }
+
+    public LinkedList<DetectedObject> getDetectedObjectsAtTick(int tick)
+    {
+        LinkedList<DetectedObject> DetectedObjectsAtTick = new LinkedList<DetectedObject>();
         for(StampedDetectedObjects obj: stampDetectedObjects)
         {
             if(obj.getTime() == tick)

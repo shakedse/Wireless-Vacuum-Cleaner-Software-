@@ -1,4 +1,6 @@
 package bgu.spl.mics.application.services;
+import bgu.spl.mics.application.messages.PoseEvent;
+import bgu.spl.mics.application.messages.TickBroadcast;
 import bgu.spl.mics.application.objects.*;
 import bgu.spl.mics.MicroService;
 
@@ -7,14 +9,15 @@ import bgu.spl.mics.MicroService;
  * and broadcasting PoseEvents at every tick.
  */
 public class PoseService extends MicroService {
-
+    private GPSIMU myPose;
     /**
      * Constructor for PoseService.
      *
      * @param gpsimu The GPSIMU object that provides the robot's pose data.
      */
     public PoseService(GPSIMU gpsimu) {
-        super("Change_This_Name");
+        super("PoseService");
+        this.myPose = gpsimu;
         // TODO Implement this
     }
 
@@ -24,6 +27,9 @@ public class PoseService extends MicroService {
      */
     @Override
     protected void initialize() {
-        // TODO Implement this
+        subscribeBroadcast(TickBroadcast.class, (TickBroadcast tick) ->{
+            myPose.setTick(tick.getTick());
+            sendEvent(new PoseEvent<Pose>(myPose.getPoseAtTick()));//creating an event at a certin tick
+        });
     }
 }

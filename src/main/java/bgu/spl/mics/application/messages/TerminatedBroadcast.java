@@ -11,4 +11,9 @@ public class TerminatedBroadcast implements Broadcast {
     {
         this.terminated = terminated;
     }
+
+    public MicroService getTerminated()
+    {
+        return terminated;
+    }
 }

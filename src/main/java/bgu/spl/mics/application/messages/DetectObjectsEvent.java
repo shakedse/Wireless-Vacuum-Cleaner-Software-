@@ -1,15 +1,17 @@
 package bgu.spl.mics.application.messages;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
 
 import bgu.spl.mics.application.objects.*;
 import bgu.spl.mics.*;
 
-public class DetectObjectsEvent implements Event {
-    private List<DetectedObject> detectedObjects;
+public class DetectObjectsEvent<DetectedObject> implements Event {
+    private LinkedList<DetectedObject> detectedObjects;
     private int time;
 
-    public DetectObjectsEvent(int time, List<DetectedObject> detectedObjects)
+    public DetectObjectsEvent(int time, LinkedList<DetectedObject> detectedObjects)
     {
         this.time = time;
         this.detectedObjects = detectedObjects;
@@ -20,7 +22,7 @@ public class DetectObjectsEvent implements Event {
         return time;
     }
 
-    public List<DetectedObject> getDetectedObjects()
+    public LinkedList<DetectedObject> getDetectedObjects()
     {
         return detectedObjects;
     }

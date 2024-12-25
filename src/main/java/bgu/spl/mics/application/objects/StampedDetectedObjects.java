@@ -1,7 +1,9 @@
 package bgu.spl.mics.application.objects;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Represents objects detected by the camera at a specific timestamp.
@@ -12,12 +14,12 @@ public class StampedDetectedObjects
     // TODO: Define fields and methods.
     //fields:
     private int time;
-    private CopyOnWriteArrayList<DetectedObject> DetectedObjects;
+    private LinkedList<DetectedObject> DetectedObjects;
     
     public StampedDetectedObjects (int time)
     {
         this.time=time; // ????
-        this.DetectedObjects = new CopyOnWriteArrayList <DetectedObject>();//?????
+        this.DetectedObjects = new LinkedList<DetectedObject>();//?????
     }
 
     public int getTime()
@@ -25,7 +27,7 @@ public class StampedDetectedObjects
         return time;
     }
 
-    public CopyOnWriteArrayList<DetectedObject> getList()
+    public LinkedList<DetectedObject> getList()
     {
         return DetectedObjects;
     }

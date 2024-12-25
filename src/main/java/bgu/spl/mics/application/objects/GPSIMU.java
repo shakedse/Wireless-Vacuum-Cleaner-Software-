@@ -1,7 +1,7 @@
 package bgu.spl.mics.application.objects;
 
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Represents the robot's GPS and IMU system.
@@ -12,12 +12,31 @@ public class GPSIMU
     // TODO: Define fields and methods.
     private int currentTick;
     private STATUS status;
-    private List<Pose> PoseList;
+    private LinkedBlockingQueue<Pose> PoseList;
     
-     public GPSIMU (int currentTick)
- {
-     this.currentTick=currentTick;
-     this.status=STATUS.DOWN;
-     this.PoseList = new CopyOnWriteArrayList <Pose>();//?????
- }
+    public GPSIMU (int currentTick)
+    {
+        this.currentTick=0;
+        this.status=STATUS.DOWN;
+        this.PoseList = new LinkedBlockingQueue<Pose>();//?????
+    }
+
+    public Pose getPoseAtTick()
+    {
+        for(Pose p: PoseList)
+        {
+            if(p.getTime() == currentTick)
+            {
+                return p;
+            }
+        }
+        return null;
+    }
+    
+    public void setTick(int tick)
+    {
+        currentTick = tick;
+    }
+
+
 }
