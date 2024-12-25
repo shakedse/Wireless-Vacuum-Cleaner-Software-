@@ -39,7 +39,8 @@ public class Future<T>
 		//TODO: implement this.
 		while (!isDone) //waiting for a result
 		{
-			try {
+			try 
+			{
 				this.wait();// waits till gets notify that we found a result
 			} 
 			catch (InterruptedException e) 
@@ -86,7 +87,7 @@ public class Future<T>
 		//TODO: implement this.
 		long waitingTime = unit.toMillis(timeout);//converting long to milis
 		long endTime = System.currentTimeMillis() + waitingTime;
-
+	
 		while (!isDone) 
 		{
 			long remainTime = endTime - System.currentTimeMillis();//Time left

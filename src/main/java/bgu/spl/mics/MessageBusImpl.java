@@ -131,7 +131,7 @@ public class MessageBusImpl implements MessageBus {
 	public Message awaitMessage(MicroService m) throws InterruptedException
 	{
 		if(!messageQueue.containsKey(m))
-			throw new IllegalStateException("This MicroService hasn't register");
+			throw new InterruptedException("This MicroService hasn't register");
 		try
 		{
 			return messageQueue.get(m).take();

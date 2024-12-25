@@ -10,11 +10,10 @@ public class FusionSlam
 
     // Singleton instance holder
     //fields:
-    private 
 
 
     private static class FusionSlamHolder
-     {
+    {
         // TODO: Implement singleton instance logic.
     }
 }
