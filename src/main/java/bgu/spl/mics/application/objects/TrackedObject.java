@@ -15,14 +15,18 @@ public class TrackedObject
     private String id;
     private int Time;
     private String descripton;
-    private LinkedList<CloudPoint> cloudPoints;
+    private CloudPoint[] cloudPoints;
 
     public TrackedObject (String id,int time, String descripton, LinkedList<CloudPoint> cloudPoints)
     {
         this.id=id;
         this.descripton=descripton;
         this.Time = time;
-        this.cloudPoints = cloudPoints;// איזה גודל המערך צריך להיות?
+        this.cloudPoints = new CloudPoint[cloudPoints.size()];// איזה גודל המערך צריך להיות?
+        for(int i = 0; i < cloudPoints.size(); i++)
+        {
+            this.cloudPoints[i] = new CloudPoint(cloudPoints.get(i).getY(), cloudPoints.get(i).getX());
+        }
     }
 
     public TrackedObject (String id,int time, String descripton, List<LinkedList<Double>> cloudPoints)
@@ -32,7 +36,7 @@ public class TrackedObject
         this.Time = time;
         for(int i = 0; i < cloudPoints.size(); i++)
         {
-            this.cloudPoints.add(new CloudPoint(cloudPoints.get(i).get(0), cloudPoints.get(i).get(1), cloudPoints.get(i)));
+            this.cloudPoints[i] = new CloudPoint(cloudPoints.get(i).get(0), cloudPoints.get(i).get(1), cloudPoints.get(i)); 
         }
     }
 }

@@ -10,10 +10,10 @@ import com.google.gson.reflect.TypeToken;
  */
 public class LiDarDataBase 
 {
-    private static LiDarDataBase instance;
+    private static LiDarDataBase instance = null;
     private List<StampedCloudPoints> cloudPoints;
-    private static Object lock;
-    /**
+    private static final Object lock = new Object();
+        /**
      * Returns the singleton instance of LiDarDataBase.
      *
      * @param filePath The path to the LiDAR data file.
@@ -23,7 +23,7 @@ public class LiDarDataBase
 
     private LiDarDataBase(String filepath) 
     {
-        Gson gson = new Gson(); 
+        Gson gson = new Gson();
         try (FileReader reader = new FileReader(filepath)) 
         {
             // Convert JSON File to Java Object

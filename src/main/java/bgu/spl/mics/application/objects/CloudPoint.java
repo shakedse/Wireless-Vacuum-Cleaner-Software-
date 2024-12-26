@@ -22,4 +22,19 @@ public class CloudPoint
         this.y=y;
         this.cloudPoints = cloudPoints;
     }
+
+    public CloudPoint(double x, double y)
+    {
+        this.x=x;
+        this.y=y;
+        this.cloudPoints = null;
+    } 
+
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
 }
