@@ -2,8 +2,6 @@ package bgu.spl.mics.application.objects;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Represents objects detected by the camera at a specific timestamp.

@@ -6,10 +6,11 @@ import bgu.spl.mics.application.messages.TickBroadcast;
 import bgu.spl.mics.application.messages.TrackedObjectsEvent;
 import bgu.spl.mics.application.objects.*;
 
-import java.util.LinkedList;
 import java.util.*;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import bgu.spl.mics.MessageBusImpl;
 import bgu.spl.mics.MicroService;
 
 /**
@@ -30,13 +31,13 @@ public class LiDarService extends MicroService {
 
     private final LiDarWorkerTracker myWorkerTracker;
     private int time;
-    private DetectObjectsEvent<DetectedObject> detectedObjects;
+    private BlockingQueue<DetectObjectsEvent<DetectedObject>> detectedObjects;
 
     public LiDarService(LiDarWorkerTracker LiDarWorkerTracker) 
     {
         super("LidarWorker" + LiDarWorkerTracker.getID());
         this.myWorkerTracker = LiDarWorkerTracker;
-        this.detectedObjects = new DetectObjectsEvent<DetectedObject>(time, new LinkedList<DetectedObject>());
+        this.detectedObjects = new LinkedBlockingQueue<DetectObjectsEvent<DetectedObject>>();
         time = 0;
     }
 
@@ -50,23 +51,26 @@ public class LiDarService extends MicroService {
     {
         // TODO Implement this
         subscribeBroadcast(TickBroadcast.class ,(TickBroadcast tick) ->{
-            time = tick.getTick() + myWorkerTracker.getFrequency(); // why time exiets
-            if(time == detectedObjects.getTime())
+            time = tick.getTick(); // why time exiets
+            if(time == detectedObjects.peek().getTime() - myWorkerTracker.getFrequency())
             {
-                LinkedList<TrackedObject> TrackedObjectsList = myWorkerTracker.getTrackedObjects();
+                DetectObjectsEvent<DetectedObject> detectionEvent = detectedObjects.poll();
+                LinkedList<TrackedObject> TrackedObjectsList = myWorkerTracker.getTrackedObjects(detectionEvent.getDetectedObjects(),time);
                 if(!TrackedObjectsList.isEmpty())
                 {
                     TrackedObjectsEvent<TrackedObject> event = new TrackedObjectsEvent<TrackedObject>(TrackedObjectsList);
                     sendEvent(event); //returns Future???
                     System.out.println("TickBroadcast" + event);
                 }
+                MessageBusImpl.getInstance().complete(detectionEvent, TrackedObjectsList);
             }
         });
+
         subscribeBroadcast(TerminatedBroadcast.class ,(TerminatedBroadcast terminate) ->{
-        if(terminate.getTerminated().getClass() == TimeService.class)
-        {
-           terminate();
-        }
+            if(terminate.getTerminated().getClass() == TimeService.class)
+            {
+                terminate();
+            }
         });
 
         subscribeBroadcast(CrashedBroadcast.class ,Call ->{
@@ -74,8 +78,8 @@ public class LiDarService extends MicroService {
         });
 
         subscribeEvent(DetectObjectsEvent.class ,(DetectObjectsEvent event) ->{
-            detectedObjects = event;
+            detectedObjects.add(event);
         });
     }
-    }
+}
 

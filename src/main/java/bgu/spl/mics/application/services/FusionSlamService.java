@@ -1,4 +1,9 @@
 package bgu.spl.mics.application.services;
+import bgu.spl.mics.application.messages.CrashedBroadcast;
+import bgu.spl.mics.application.messages.PoseEvent;
+import bgu.spl.mics.application.messages.TerminatedBroadcast;
+import bgu.spl.mics.application.messages.TickBroadcast;
+import bgu.spl.mics.application.messages.TrackedObjectsEvent;
 import bgu.spl.mics.application.objects.*;
 import bgu.spl.mics.MicroService;
 
@@ -15,8 +20,12 @@ public class FusionSlamService extends MicroService {
      *
      * @param fusionSlam The FusionSLAM object responsible for managing the global map.
      */
+
+    private FusionSlam fusionSlam;
+
     public FusionSlamService(FusionSlam fusionSlam) {
-        super("Change_This_Name");
+        super("The FusionSlam");
+        this.fusionSlam = fusionSlam;
         // TODO Implement this
     }
 
@@ -27,6 +36,27 @@ public class FusionSlamService extends MicroService {
      */
     @Override
     protected void initialize() {
-        // TODO Implement this
+        subscribeBroadcast(TickBroadcast.class ,(TickBroadcast tick) ->{
+            
+        });
+
+        subscribeEvent(TrackedObjectsEvent.class ,(TrackedObjectsEvent event) ->{
+            
+        });
+
+        subscribeEvent(PoseEvent.class ,(PoseEvent pose) ->{
+            fusionSlam.getInstance().addPose((Pose)pose.getPose());
+        });
+
+        subscribeBroadcast(TerminatedBroadcast.class ,(TerminatedBroadcast terminate) ->{
+            if(terminate.getTerminated().getClass() == TimeService.class)
+            {
+                terminate();
+            }
+        });
+
+        subscribeBroadcast(CrashedBroadcast.class ,Call ->{
+       
+        });
     }
 }

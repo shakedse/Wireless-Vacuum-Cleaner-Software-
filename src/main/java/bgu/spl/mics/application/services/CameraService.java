@@ -48,8 +48,8 @@ public class CameraService extends MicroService {
         // TODO Implement this
 
         subscribeBroadcast(TickBroadcast.class ,(TickBroadcast tick) ->{
-            time = tick.getTick() + camera.getFrequency(); // why time exiets
-            LinkedList<DetectedObject> detectedObjects = camera.getDetectedObjectsAtTick(time);
+            time = tick.getTick(); // why time exiets
+            LinkedList<DetectedObject> detectedObjects = camera.getDetectedObjectsAtTick(time - camera.getFrequency());
             if(!detectedObjects.isEmpty())
             {
                 DetectObjectsEvent event = new DetectObjectsEvent(time, detectedObjects);
