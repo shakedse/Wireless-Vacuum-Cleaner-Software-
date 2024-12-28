@@ -68,7 +68,7 @@ public class LiDarDataBase
             System.out.print("     ");
             System.out.print(getInstance(".\\example_input_2\\lidar_data.json").getCloudPoints().get(i).getTime());
             System.out.print("     "); // not getting the right time!!!
-            //System.out.print(getInstance(".\\example_input_2\\lidar_data.json").getCloudPoints().get(i).getCloudPoints().toString());
+            System.out.print(getInstance(".\\example_input_2\\lidar_data.json").getCloudPoints().get(i).getCloudPoints().toString());
             System.out.println("     ");
         }
     }
