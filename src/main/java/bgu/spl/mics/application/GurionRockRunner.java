@@ -1,11 +1,15 @@
 package bgu.spl.mics.application;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.List;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
-import bgu.spl.mics.MicroService;
-import bgu.spl.mics.application.objects.Camera;
-import bgu.spl.mics.application.services.CameraService;
+import java.util.concurrent.LinkedBlockingQueue;
+import bgu.spl.mics.*;
+import bgu.spl.mics.application.objects.*;
+import bgu.spl.mics.application.services.*;
 
 /**
  * The main entry point for the GurionRock Pro Max Ultra Over 9000 simulation.
@@ -28,7 +32,9 @@ public class GurionRockRunner {
         LinkedBlockingQueue<MicroService> test = new LinkedBlockingQueue<MicroService>();
         Camera cam = new Camera(2,3 );
         MicroService cama = new CameraService(cam);
+        Thread TrCm = new Thread(cama);
         test.add(cama);
+        TrCm.start();
         try
         {
             System.out.println(test.take().getClass());

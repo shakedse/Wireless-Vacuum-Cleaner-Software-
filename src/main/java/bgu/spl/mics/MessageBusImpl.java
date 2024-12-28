@@ -14,7 +14,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class MessageBusImpl implements MessageBus {
 
-	private static MessageBusImpl instance = new MessageBusImpl();
+	private static final MessageBusImpl instance = new MessageBusImpl();
 	private ConcurrentHashMap<MicroService, BlockingQueue<Message>> messageQueue;// queues for messages = events and broadcast
 	private ConcurrentHashMap<Class<? extends Event<?>>, BlockingQueue<MicroService>> eventSubscribers;// map for event subscribers
 	private ConcurrentHashMap<Class<? extends Broadcast>, BlockingQueue<MicroService>> broadcastSubscribers;// map for broadcasts
@@ -59,7 +59,7 @@ public class MessageBusImpl implements MessageBus {
 	{
 		BlockingQueue<MicroService> curr = broadcastSubscribers.get(b.getClass());
 		//synchronized (curr) //synchronized that no ms will be added to the queue?????????????????????
-		//{
+		//{ if it's unregister it doeant matter if i added or not?
 			if (curr != null)// we found the queue
 			{
 				for(MicroService ms: curr)

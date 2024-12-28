@@ -1,7 +1,5 @@
 package bgu.spl.mics.application.objects;
 
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.LinkedList;
 import java.util.List;
 /**
@@ -11,13 +9,13 @@ import java.util.List;
 public class StampedCloudPoints {
     private String id;
     private int Time;
-    private List<List<Double>> cloudPoints;
+    private List<LinkedList<Double>> cloudPoints;
 
     public StampedCloudPoints (String id,int Time)
     {
         this.id=id;
         this.Time=Time;
-        this.cloudPoints = new LinkedList<List<Double>>();
+        this.cloudPoints = new LinkedList<LinkedList<Double>>();
         System.out.println(this.Time +  "hiiiiiiiiiiiiiiiiiiiiiiiiii");
     }
     public String getID()
@@ -29,7 +27,7 @@ public class StampedCloudPoints {
         System.out.println("hi");
         return Time;
     }
-    public List<List<Double>> getCloudPoints()
+    public List<LinkedList<Double>> getCloudPoints()
     {
         return cloudPoints;
     }

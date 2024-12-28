@@ -2,7 +2,6 @@ package bgu.spl.mics.application.objects;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.LinkedBlockingQueue;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 /**
@@ -11,9 +10,10 @@ import com.google.gson.reflect.TypeToken;
  */
 public class LiDarDataBase 
 {
-    private static LiDarDataBase instance;
+    private static LiDarDataBase instance = null;
     private List<StampedCloudPoints> cloudPoints;
-    /**
+    private static final Object lock = new Object();
+        /**
      * Returns the singleton instance of LiDarDataBase.
      *
      * @param filePath The path to the LiDAR data file.
@@ -23,7 +23,7 @@ public class LiDarDataBase
 
     private LiDarDataBase(String filepath) 
     {
-        Gson gson = new Gson(); 
+        Gson gson = new Gson();
         try (FileReader reader = new FileReader(filepath)) 
         {
             // Convert JSON File to Java Object
@@ -33,26 +33,19 @@ public class LiDarDataBase
             e.printStackTrace();
         }
     }
-   /*  private LiDarDataBase(String filepath) {
-        Gson gson = new Gson();
-        try (FileReader reader = new FileReader(filepath)) {
-            // Convert JSON File to Java Object
-            this.cloudPoints = gson.fromJson(reader, new TypeToken<LinkedBlockingQueue<StampedCloudPoints>>() {}.getType());
-            if (this.cloudPoints == null) {
-                this.cloudPoints = new LinkedBlockingQueue<>(); // Default empty queue if JSON is empty
-            }
-        } catch (IOException e) {
-            System.err.println("Error reading LiDAR data file: " + e.getMessage());
-            this.cloudPoints = new LinkedBlockingQueue<>(); // Default to empty queue in case of error
-        }
-    }*/
-
-    
 
     public static LiDarDataBase getInstance(String filePath)
     {   
         if (instance == null) 
-            instance = new LiDarDataBase(filePath);
+        {
+            synchronized(lock)
+            {
+                if (instance == null)
+                {
+                    instance = new LiDarDataBase(filePath);
+                }
+            }
+        }
         return instance;
     }
 

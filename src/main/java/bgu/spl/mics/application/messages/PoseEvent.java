@@ -10,4 +10,9 @@ public class PoseEvent<Pose> implements Event{
     {
         this.currentPose = currentPose;
     }
+
+    public Pose getPose()
+    {
+        return currentPose;
+    }
 }

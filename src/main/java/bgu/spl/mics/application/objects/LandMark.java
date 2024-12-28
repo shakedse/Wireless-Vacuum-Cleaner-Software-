@@ -1,7 +1,7 @@
 package bgu.spl.mics.application.objects;
 
+import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Represents a landmark in the environment map.
@@ -18,7 +18,7 @@ public class LandMark {
  {
      this.id=id;
      this.description=description;
-     this.cloudPointsList = new CopyOnWriteArrayList <CloudPoint>();//?????
+     this.cloudPointsList = new LinkedList <CloudPoint>();//?????
  }
 
 }
