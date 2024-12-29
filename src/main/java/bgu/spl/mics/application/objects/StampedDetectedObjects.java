@@ -14,10 +14,10 @@ public class StampedDetectedObjects
     private int time;
     private LinkedList<DetectedObject> DetectedObjects;
     
-    public StampedDetectedObjects (int time)
+    public StampedDetectedObjects (int time,  LinkedList<DetectedObject> DetectedObjects)
     {
         this.time=time; // ????
-        this.DetectedObjects = new LinkedList<DetectedObject>();//?????
+        this.DetectedObjects = DetectedObjects;//?????
     }
 
     public int getTime()
@@ -28,5 +28,9 @@ public class StampedDetectedObjects
     public LinkedList<DetectedObject> getList()
     {
         return DetectedObjects;
+    }
+    //public boolean checkError()
+    {//to do
+        //for(de)
     }
 }

@@ -1,4 +1,5 @@
 package bgu.spl.mics.application.services;
+import bgu.spl.mics.application.messages.CrashedBroadcast;
 import bgu.spl.mics.application.messages.PoseEvent;
 import bgu.spl.mics.application.messages.TickBroadcast;
 import bgu.spl.mics.application.objects.*;
@@ -29,7 +30,13 @@ public class PoseService extends MicroService {
     protected void initialize() {
         subscribeBroadcast(TickBroadcast.class, (TickBroadcast tick) ->{
             myPose.setTick(tick.getTick());
-            sendEvent(new PoseEvent<Pose>(myPose.getPoseAtTick()));//creating an event at a certin tick
+           //returns future??
+            sendEvent(new PoseEvent<Pose>(myPose.getPoseAtTick(tick.getTick())));//creating an event at a certin tick
         });
+
+        subscribeBroadcast(CrashedBroadcast.class ,Call ->{
+        terminate();
+        });
+ 
     }
 }

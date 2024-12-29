@@ -27,30 +27,10 @@ public class GurionRockRunner {
      *
      * @param args Command-line arguments. The first argument is expected to be the path to the configuration file.
      */
-    public static void main(String[] args) {
-        System.out.println("Hello World!");
-        LinkedBlockingQueue<MicroService> test = new LinkedBlockingQueue<MicroService>();
-        Camera cam = new Camera(2,3 );
-        MicroService cama = new CameraService(cam);
-        Thread TrCm = new Thread(cama);
-        test.add(cama);
-        TrCm.start();
-        try
-        {
-            System.out.println(test.take().getClass());
-        }
-        catch(InterruptedException e)
-        {
-            Thread.currentThread().interrupt();
-        }
-
-        System.out.println(test.poll());
-        
-        
-
-
-        System.out.println(test.remainingCapacity());
+    public static void main(String[] args) 
+    {        
         // TODO: Parse configuration file.
+        
         // TODO: Initialize system components and services.
         // TODO: Start the simulation.
     }

@@ -14,11 +14,11 @@ public class LandMark {
     private String description;
     private List<CloudPoint> cloudPointsList;
 
-     public LandMark (String id, String description)
+     public LandMark (String id, String description, List<CloudPoint> cloudPointsList)
  {
      this.id=id;
      this.description=description;
-     this.cloudPointsList = new LinkedList <CloudPoint>();//?????
+     this.cloudPointsList = cloudPointsList;
  }
 
 }

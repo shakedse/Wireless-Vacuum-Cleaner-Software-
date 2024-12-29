@@ -142,7 +142,7 @@ public abstract class MicroService implements Runnable {
      * message.
      */
     protected final void terminate() {
-        sendBroadcast(new TerminatedBroadcast(this)); // when this microService is terminated tell all others
+        sendBroadcast(new TerminatedBroadcast(this.getName())); // when this microService is terminated tell all others
         this.terminated = true;
     }
 
@@ -164,6 +164,7 @@ public abstract class MicroService implements Runnable {
         System.out.println("test");
         MessageBusImpl.getInstance().register(this);
         initialize();
+        
         while (!terminated) 
         {
             try
@@ -175,8 +176,14 @@ public abstract class MicroService implements Runnable {
             }
             catch(InterruptedException e)
             {
-                Thread.currentThread().interrupt(); // Handle interruption
+                MessageBusImpl.getInstance().unregister(this);
                 terminate();
+                Thread.currentThread().interrupt(); // Handle interruption 
+            }
+            catch(IllegalStateException e)
+            {
+                terminate();
+                Thread.currentThread().interrupt(); // Handle interruption 
             }
         }
         MessageBusImpl.getInstance().unregister(this);

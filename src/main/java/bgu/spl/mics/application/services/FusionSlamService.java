@@ -24,7 +24,7 @@ public class FusionSlamService extends MicroService {
     private FusionSlam fusionSlam;
 
     public FusionSlamService(FusionSlam fusionSlam) {
-        super("The FusionSlam");
+        super("FusionSlam");
         this.fusionSlam = fusionSlam;
         // TODO Implement this
     }
@@ -35,28 +35,51 @@ public class FusionSlamService extends MicroService {
      * and sets up callbacks for updating the global map.
      */
     @Override
-    protected void initialize() {
-        subscribeBroadcast(TickBroadcast.class ,(TickBroadcast tick) ->{
+    protected void initialize() 
+    {
+    //TickBroadcast
+        subscribeBroadcast(TickBroadcast.class ,(TickBroadcast tick) ->
+        {
             
         });
-
+        
+    //TrackedObjectsEvent        
         subscribeEvent(TrackedObjectsEvent.class ,(TrackedObjectsEvent event) ->{
-            
-        });
-
-        subscribeEvent(PoseEvent.class ,(PoseEvent pose) ->{
-            fusionSlam.getInstance().addPose((Pose)pose.getPose());
-        });
-
-        subscribeBroadcast(TerminatedBroadcast.class ,(TerminatedBroadcast terminate) ->{
-            if(terminate.getTerminated().getClass() == TimeService.class)
+            //checking if the object is new or previously detected
+            for(Object obj : event.getTrackedObjectsList())
             {
+                TrackedObject trackedObject = (TrackedObject) obj;
+                if(!fusionSlam.getInstance().getTrackedObjects().contains(trackedObject))//if the object is new
+                {
+                    fusionSlam.getTrackedObjects().add(trackedObject);//add it to the tracked objects list
+                    fusionSlam.addNewLandMark(trackedObject);//add it to the map
+                }
+                else//if the object is previously detected
+                {
+                    //updates measurements by averaging with previous
+                    fusionSlam.updateOldLandMark(trackedObject);  
+                }
+            }
+        });
+        
+    //PoseEvent
+        subscribeEvent(PoseEvent.class ,(PoseEvent pose) ->{
+            fusionSlam.getInstance().addPose((Pose)pose.getPose());//adding the current pose if it is not present in the poses list
+
+        });
+        
+    //TerminatedBroadcast
+        subscribeBroadcast(TerminatedBroadcast.class ,(TerminatedBroadcast terminate) ->{
+            if(terminate.getTerminatedID().equals("TimeService") )//if the terminated MS is timeService - terminate me too
+            {
+                sendBroadcast(new TerminatedBroadcast("fusionSlam"));//tell everyone that the camera terminated itself
                 terminate();
             }
         });
 
-        subscribeBroadcast(CrashedBroadcast.class ,Call ->{
-       
+    //CrashedBroadcast
+        subscribeBroadcast(CrashedBroadcast.class ,(CrashedBroadcast crashed) ->{
+            terminate();
         });
     }
 }

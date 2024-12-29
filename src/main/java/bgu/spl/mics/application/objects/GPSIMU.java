@@ -1,6 +1,8 @@
 package bgu.spl.mics.application.objects;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -12,25 +14,21 @@ public class GPSIMU
     // TODO: Define fields and methods.
     private int currentTick;
     private STATUS status;
-    private LinkedBlockingQueue<Pose> PoseList;
+    private ArrayList<Pose> PoseList;
     
     public GPSIMU (int currentTick)
     {
         this.currentTick=0;
         this.status=STATUS.DOWN;
-        this.PoseList = new LinkedBlockingQueue<Pose>();//?????
+        this.PoseList = new ArrayList<Pose>();//?????
     }
 
-    public Pose getPoseAtTick()
+    public Pose getPoseAtTick (int tickNow)
     {
-        for(Pose p: PoseList)
-        {
-            if(p.getTime() == currentTick)
-            {
-                return p;
-            }
-        }
-        return null;
+        if(PoseList.size() == tickNow)//if we finished the poses
+            this.status = STATUS.DOWN;
+
+    return PoseList.get(tickNow-1);
     }
     
     public void setTick(int tick)

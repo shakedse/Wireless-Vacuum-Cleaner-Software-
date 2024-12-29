@@ -14,21 +14,12 @@ public class CloudPoint
 
     private double x;
     private double y;
-    private LinkedList<Double> cloudPoints;
-
-    public CloudPoint(double x, double y, LinkedList<Double> cloudPoints)
-    {
-        this.x=x;
-        this.y=y;
-        this.cloudPoints = cloudPoints;
-    }
 
     public CloudPoint(double x, double y)
     {
         this.x=x;
         this.y=y;
-        this.cloudPoints = null;
-    } 
+        }
 
     public double getX() {
         return x;

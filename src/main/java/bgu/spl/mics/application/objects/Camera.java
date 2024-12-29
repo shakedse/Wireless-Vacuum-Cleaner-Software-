@@ -6,6 +6,8 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import bgu.spl.mics.application.messages.DetectedObjectsEvent;
+
 /**
  * Represents a camera sensor on the robot.
  * Responsible for detecting objects in the environment.
@@ -23,10 +25,9 @@ public class Camera
     {
         this.id=id;
         this.frequency=frequency;
-        this.status=STATUS.DOWN;
+        this.status=STATUS.UP;
         this.stampDetectedObjects = new LinkedList<StampedDetectedObjects>();//?????
     }
-
     public int getFrequency()
     {
         return frequency;
@@ -35,7 +36,7 @@ public class Camera
     {
         return id;
     }
-
+//returns the objects captured list at a certin time tick
     public LinkedList<DetectedObject> getDetectedObjectsAtTick(int tick)
     {
         LinkedList<DetectedObject> DetectedObjectsAtTick = new LinkedList<DetectedObject>();
@@ -49,5 +50,21 @@ public class Camera
         }
         return DetectedObjectsAtTick;
     }
-
-}
+    
+    //returns the event that matches the certin tick
+    public DetectedObjectsEvent activateTick(int tick)
+    {
+        LinkedList<DetectedObject> detectedObjects = this.getDetectedObjectsAtTick(tick);
+        if(!detectedObjects.isEmpty())
+        {
+    //id error??
+            DetectedObjectsEvent event = new DetectedObjectsEvent(tick, detectedObjects, id);
+            for(int i=0; i<detectedObjects.size(); i++)
+            {
+            StatisticalFolder.getInstance().incrementNumDetectedObjects();
+           }
+            return event;
+        }
+            return null;
+    }
+    }

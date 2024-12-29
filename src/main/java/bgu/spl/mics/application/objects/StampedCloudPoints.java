@@ -9,25 +9,23 @@ import java.util.List;
 public class StampedCloudPoints {
     private String id;
     private int Time;
-    private List<LinkedList<Double>> cloudPoints;
+    private List<List<Double>> cloudPoints;
 
-    public StampedCloudPoints (String id,int Time)
+    public StampedCloudPoints (String id,int Time, List<List<Double>> cloudPoints)
     {
         this.id=id;
         this.Time=Time;
-        this.cloudPoints = new LinkedList<LinkedList<Double>>();
-        System.out.println(this.Time +  "hiiiiiiiiiiiiiiiiiiiiiiiiii");
-    }
+        this.cloudPoints = cloudPoints;
+        }
     public String getID()
     {
         return id;
     }
     public int getTime()
     {
-        System.out.println("hi");
         return Time;
     }
-    public List<LinkedList<Double>> getCloudPoints()
+    public List<List<Double>> getCloudPoints()
     {
         return cloudPoints;
     }

@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * LiDarWorkerTracker is responsible for managing a LiDAR worker.
- * It processes DetectObjectsEvents and generates TrackedObjectsEvents by using data from the LiDarDataBase.
+ * It processes DetectedObjectsEvents and generates TrackedObjectsEvents by using data from the LiDarDataBase.
  * Each worker tracks objects and sends observations to the FusionSlam service.
  */
 public class LiDarWorkerTracker
@@ -22,7 +22,7 @@ public class LiDarWorkerTracker
     {
         this.id=id;
         this.frequency=frequency;
-        this.status=STATUS.DOWN;
+        this.status=STATUS.UP;
         this.trackedObjects = new LinkedList<TrackedObject>();//?????
     }
     public int getID()
@@ -35,16 +35,26 @@ public class LiDarWorkerTracker
         return frequency;
     }
 
-    public LinkedList<TrackedObject> getTrackedObjects(LinkedList<DetectedObject> detectedObjects, int time)
+    //returns the tracked objects that has a cloudpoints list at a time
+    public TrackedObject getTrackedObjects(DetectedObject detectedObject)
     {
-        trackedObjects = new LinkedList<TrackedObject>(); 
         LiDarDataBase dataBase = LiDarDataBase.getInstance("path");
-        for(StampedCloudPoints cp: dataBase.getCloudPoints())
+        for(StampedCloudPoints point: dataBase.getCloudPoints())
         {
-            for(DetectedObject detected: detectedObjects)
-                if(cp.getID().equals(detected.getID()) && cp.getTime() <= time) // if the deteced objects exists in the LiDarDataBase and the time detected is right
-                    trackedObjects.add(new TrackedObject(detected.getID(), time, detected.getDescription(), cp.getCloudPoints())); // adding the object to the tracked list
+            LinkedList<CloudPoint> cloudPoints = new LinkedList<CloudPoint>();
+            for(int i=0; i<point.getCloudPoints().size();i++) // for each cloud point in the list
+            {
+                cloudPoints.add(new CloudPoint (point.getCloudPoints().get(i).get(0),point.getCloudPoints().get(i).get(1)));
+            }
+            if(point.getID().equals(detectedObject.getID())) // if the deteced object exists in the LiDarDataBase 
+               { 
+                // creating the object
+                TrackedObject trackedObject = new TrackedObject(point.getID(), point.getTime(), detectedObject.getDescription(), cloudPoints); 
+                 //adding the object found to the tracked objects final list
+                this.trackedObjects.add(trackedObject);
+                return trackedObject;
+               }
         }
-        return trackedObjects;
+         return null;
     }
 }

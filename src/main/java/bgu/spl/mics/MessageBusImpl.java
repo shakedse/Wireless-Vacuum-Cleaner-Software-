@@ -12,7 +12,8 @@ import java.util.concurrent.LinkedBlockingQueue;
  * unit testing) may be added to this class
  * All other methods and members you add the class must be private.
  */
-public class MessageBusImpl implements MessageBus {
+public class MessageBusImpl implements MessageBus 
+{
 
 	private static final MessageBusImpl instance = new MessageBusImpl();
 	private ConcurrentHashMap<MicroService, BlockingQueue<Message>> messageQueue;// queues for messages = events and broadcast
@@ -27,7 +28,24 @@ public class MessageBusImpl implements MessageBus {
         messageQueue = new ConcurrentHashMap<>();
         EventAndFuture = new ConcurrentHashMap<>();
     }
-
+	//getters
+	public ConcurrentHashMap<MicroService, BlockingQueue<Message>> getMessageQueue() 
+	{
+		return messageQueue;
+	}
+	public ConcurrentHashMap<Class<? extends Event<?>>, BlockingQueue<MicroService>> getEventSubscribers() 
+	{
+		return eventSubscribers;
+	}
+	public ConcurrentHashMap<Class<? extends Broadcast>, BlockingQueue<MicroService>> getBroadcastSubscribers() 
+	{
+		return broadcastSubscribers;
+	}
+	public ConcurrentHashMap<Event<?>, Future<?>> getEventAndFuture() 
+	{
+		return EventAndFuture;
+	}
+	
 	//A method so that we can reach the private methods
 	public static MessageBusImpl getInstance()
 	{
@@ -103,7 +121,8 @@ public class MessageBusImpl implements MessageBus {
 	@Override
 	public void unregister(MicroService m) 
 	{
-		if(messageQueue.containsKey(m)){
+		if(messageQueue.containsKey(m))
+		{
 			BlockingQueue<Message> curr = messageQueue.get(m);
 			synchronized(curr)
 			{
@@ -113,8 +132,10 @@ public class MessageBusImpl implements MessageBus {
 						EventAndFuture.get(toDelete).resolve(null);
 						EventAndFuture.remove(toDelete);
 					}
+				messageQueue.remove(m);
 			}
 
+			//removing the microService from the other queues
 			synchronized(eventSubscribers)
 			{
 				eventSubscribers.values().forEach(queue -> queue.remove(m));

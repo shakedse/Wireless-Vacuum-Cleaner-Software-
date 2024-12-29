@@ -5,15 +5,15 @@ import bgu.spl.mics.application.objects.*;
 import bgu.spl.mics.*;
 
 public class TerminatedBroadcast implements Broadcast {
-    private MicroService terminated;
+    private String terminatedID;
 
-    public TerminatedBroadcast(MicroService terminated)
+    public TerminatedBroadcast(String terminatedID)
     {
-        this.terminated = terminated;
+        this.terminatedID = terminatedID;
     }
 
-    public MicroService getTerminated()
+    public String getTerminatedID()
     {
-        return terminated;
+        return terminatedID;
     }
 }
