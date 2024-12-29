@@ -14,13 +14,13 @@ public class GPSIMU
     // TODO: Define fields and methods.
     private int currentTick;
     private STATUS status;
-    private ArrayList<Pose> PoseList;
+    private LinkedList<Pose> PoseList;
     
     public GPSIMU (int currentTick)
     {
         this.currentTick=0;
         this.status=STATUS.DOWN;
-        this.PoseList = new ArrayList<Pose>();//?????
+        this.PoseList = new LinkedList<Pose>();
     }
 
     public Pose getPoseAtTick (int tickNow)
