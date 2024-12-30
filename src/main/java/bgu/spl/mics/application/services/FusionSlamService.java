@@ -65,7 +65,6 @@ public class FusionSlamService extends MicroService {
     //PoseEvent
         subscribeEvent(PoseEvent.class ,(PoseEvent pose) ->{
             fusionSlam.getInstance().addPose((Pose)pose.getPose());//adding the current pose if it is not present in the poses list
-
         });
         
     //TerminatedBroadcast

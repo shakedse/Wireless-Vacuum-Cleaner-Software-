@@ -1,9 +1,6 @@
 package bgu.spl.mics.application.objects;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.ArrayList;
-import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Represents the robot's GPS and IMU system.
@@ -27,8 +24,7 @@ public class GPSIMU
     {
         if(PoseList.size() == tickNow)//if we finished the poses
             this.status = STATUS.DOWN;
-
-    return PoseList.get(tickNow-1);
+        return PoseList.get(tickNow-1);
     }
     
     public void setTick(int tick)

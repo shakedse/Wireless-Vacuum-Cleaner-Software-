@@ -76,8 +76,8 @@ public class MessageBusImpl implements MessageBus
 	public void sendBroadcast(Broadcast b) 
 	{
 		BlockingQueue<MicroService> curr = broadcastSubscribers.get(b.getClass());
-		//synchronized (curr) //synchronized that no ms will be added to the queue?????????????????????
-		//{ if it's unregister it doeant matter if i added or not?
+		synchronized (curr) //synchronized that no ms will be added to the queue?????????????????????
+		{ //if it's unregister it doeant matter if i added or not?
 			if (curr != null)// we found the queue
 			{
 				for(MicroService ms: curr)
@@ -88,7 +88,7 @@ public class MessageBusImpl implements MessageBus
 					}
 				}
 			}
-		//}
+		}
 	}
 
 	@Override

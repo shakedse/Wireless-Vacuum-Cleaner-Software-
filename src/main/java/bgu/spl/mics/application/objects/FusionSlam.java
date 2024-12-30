@@ -61,23 +61,40 @@ public class FusionSlam
     {
         //input - an old tracked object
         LinkedList<CloudPoint> updatedCloudPoints = new LinkedList<CloudPoint>();
+
         for(CloudPoint p : trackedObject.getCloudPoints())//updating each cloud poin
         {
-            for(Pose pose:poses) //finding the cooralte pose
+            for(Pose pose:poses)//finding the cooralte pose
             {
                 if(trackedObject.getTime() == pose.getTime())
                 {
-                    float x = ((float) p.getX() + pose.getX())/2;
-                    float y = ((float) p.getY() + pose.getY())/2;
-                    CloudPoint newCloudPoint = new CloudPoint(x, y);
+                    CloudPoint newCloudPoint = localToGlobalCordinate(pose, p);
                     updatedCloudPoints.add(newCloudPoint);
                 }
             }
-            LandMark remove = landMarks.get(landMarks.indexOf((Object)trackedObject.getId()));//האם הקאסטינג סבבה פה?
-            landMarks.remove(remove); //remove the old object
-            LandMark newLandMark = new LandMark(trackedObject.getId(), trackedObject.getDescription(), updatedCloudPoints);
-            landMarks.add(newLandMark); //add the updated object
         }
+
+        for(LandMark landMark:landMarks)
+        {
+            if(landMark.getID().equals(trackedObject.getId()))
+            {
+                landMark.setAvgCloudPoint(updatedCloudPoints);
+            }
+        }    
+
+        /*
+        for(CloudPoint p : trackedObject.getCloudPoints()) //finding the cooralte pose
+        {
+            double x = (p.getX() + cloudPoint.getX())/2;
+            double y = (p.getY() + cloudPoint.getY())/2;
+            CloudPoint newCloudPoint = new CloudPoint(x, y);
+            updatedCloudPoints.add(newCloudPoint);
+        }
+        LandMark remove = landMarks.get(landMarks.indexOf((Object)trackedObject.getId()));//האם הקאסטינג סבבה פה?
+        landMarks.remove(remove); //remove the old object
+        LandMark newLandMark = new LandMark(trackedObject.getId(), trackedObject.getDescription(), updatedCloudPoints);
+        landMarks.add(newLandMark); //add the updated object
+        */
     }
 
     //converts the local coordinate of a cloud point to the global coordinate

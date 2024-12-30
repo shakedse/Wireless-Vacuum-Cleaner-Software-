@@ -51,7 +51,8 @@ public class LiDarWorkerTracker
                 // creating the object
                 TrackedObject trackedObject = new TrackedObject(point.getID(), point.getTime(), detectedObject.getDescription(), cloudPoints); 
                  //adding the object found to the tracked objects final list
-                this.trackedObjects.add(trackedObject);
+                
+                 this.trackedObjects.add(trackedObject);
                 return trackedObject;
                }
         }

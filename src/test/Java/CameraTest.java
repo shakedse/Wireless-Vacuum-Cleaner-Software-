@@ -22,22 +22,40 @@ import bgu.spl.mics.application.services.CameraService;
 
 //need to test - the method which prepares data before sending.
 /*
-  //returns the event that matches the certin tick
- public DetectedObjectsEvent activateTick(int tick)
- {
-     LinkedList<DetectedObject> detectedObjects = this.getDetectedObjectsAtTick
-     if(!detectedObjects.isEmpty())
-     {
- //id error??
-         DetectedObjectsEvent event = new DetectedObjectsEvent(tick, detectedObject
-         for(int i=0; i<detectedObjects.size(); i++)
-         {
-         StatisticalFolder.getInstance().incrementNumDetectedObjects();
+
+public LinkedList<DetectedObject> getDetectedObjectsAtTick(int tick)
+{
+    LinkedList<DetectedObject> DetectedObjectsAtTick = new LinkedList<DetectedObject>();
+    for(StampedDetectedObjects obj: stampDetectedObjects)
+    {
+        if(obj.getTime() == tick)
+        {
+            DetectedObjectsAtTick = obj.getList();
+            break;
         }
-         return event;
-     }
-         return null;
- */
+    }
+    return DetectedObjectsAtTick;
+}
+
+
+  //returns the event that matches the certin tick
+public DetectedObjectsEvent activateTick(int tick)
+{
+    LinkedList<DetectedObject> detectedObjects = this.getDetectedObjectsAtTick
+    if(!detectedObjects.isEmpty())
+    {
+ //id error??
+        DetectedObjectsEvent event = new DetectedObjectsEvent(tick, detectedObject
+        for(int i=0; i<detectedObjects.size(); i++)
+        {
+            StatisticalFolder.getInstance().incrementNumDetectedObjects();
+        }
+        return event;
+    }   
+    return null;
+*/
+
+
 public class CameraTest 
 {
     private static class TestMicroService extends CameraService 

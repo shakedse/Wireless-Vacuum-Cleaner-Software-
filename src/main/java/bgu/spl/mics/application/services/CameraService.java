@@ -46,8 +46,8 @@ public class CameraService extends MicroService
         // TODO Implement this
 
         subscribeBroadcast(TickBroadcast.class ,(TickBroadcast tick) ->{
-            time = tick.getTick(); 
-            DetectedObjectsEvent event = camera.activateTick(time - camera.getFrequency());//returns the events of the detected objects at the tick
+        time = tick.getTick(); 
+        DetectedObjectsEvent event = camera.activateTick(time - camera.getFrequency());//returns the events of the detected objects at the tick
         if(event != null)
         {  
             for(Object obj : event.getDetectedObjects()) //handling error object

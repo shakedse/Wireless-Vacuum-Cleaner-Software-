@@ -35,7 +35,7 @@ public class TimeService extends MicroService {
     protected void initialize() 
     {
         int tickNum = 1;
-        while (tickNum<duration) 
+        while (tickNum < duration) 
         {
             sendBroadcast(new TickBroadcast (tickNum)); 
             try

@@ -12,13 +12,32 @@ public class LandMark {
     //fields:
     private String id;
     private String description;
-    private List<CloudPoint> cloudPointsList;
+    private LinkedList<CloudPoint> cloudPointsList;
 
-     public LandMark (String id, String description, List<CloudPoint> cloudPointsList)
- {
-     this.id=id;
-     this.description=description;
-     this.cloudPointsList = cloudPointsList;
- }
+    public LandMark (String id, String description, LinkedList<CloudPoint> cloudPointsList)
+    {
+        this.id=id;
+        this.description=description;
+        this.cloudPointsList = cloudPointsList;
+    }
+
+    public LinkedList<CloudPoint> getCloudPoints()
+    {
+        return cloudPointsList;
+    }
+
+    public String getID()
+    {
+        return id;
+    }
+
+    public void setAvgCloudPoint(LinkedList<CloudPoint> newCloudPoints)
+    {
+        for(int i = 0; i < cloudPointsList.size(); i++)
+        {
+            cloudPointsList.get(i).setX((cloudPointsList.get(i).getX() + newCloudPoints.get(i).getX())/2);
+            cloudPointsList.get(i).setY((cloudPointsList.get(i).getY() + newCloudPoints.get(i).getY())/2);
+        }
+    }
 
 }

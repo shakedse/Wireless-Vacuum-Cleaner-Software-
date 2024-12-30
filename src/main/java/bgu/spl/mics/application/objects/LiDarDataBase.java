@@ -10,9 +10,8 @@ import com.google.gson.reflect.TypeToken;
  */
 public class LiDarDataBase 
 {
-    private static LiDarDataBase instance = null;
+    private static LiDarDataBase instance = new LiDarDataBase("./lidar_data.json");
     private List<StampedCloudPoints> cloudPoints;
-    private static final Object lock = new Object();
         /**
      * Returns the singleton instance of LiDarDataBase.
      *
@@ -36,16 +35,6 @@ public class LiDarDataBase
 
     public static LiDarDataBase getInstance(String filePath)
     {   
-        if (instance == null) 
-        {
-            synchronized(lock)
-            {
-                if (instance == null)
-                {
-                    instance = new LiDarDataBase(filePath);
-                }
-            }
-        }
         return instance;
     }
 
