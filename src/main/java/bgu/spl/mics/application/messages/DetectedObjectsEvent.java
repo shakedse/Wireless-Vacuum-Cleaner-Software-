@@ -7,7 +7,7 @@ import java.util.List;
 import bgu.spl.mics.application.objects.*;
 import bgu.spl.mics.*;
 
-public class DetectedObjectsEvent<DetectedObject> implements Event {
+public class DetectedObjectsEvent<DetectedObject> implements Event<DetectedObject> {
     private LinkedList<DetectedObject> detectedObjects;
     private int detectedTime;
     private int cameraID;

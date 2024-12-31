@@ -1,6 +1,6 @@
 C:\Users\ron01\OneDrive\Desktop\קבצי לימודים\סמסטר ג\תכנות מערכות\SPL2\SPL2\src\main\java\bgu\spl\mics\application\GurionRockRunner.java
 C:\Users\ron01\OneDrive\Desktop\קבצי לימודים\סמסטר ג\תכנות מערכות\SPL2\SPL2\src\main\java\bgu\spl\mics\application\messages\CrashedBroadcast.java
-C:\Users\ron01\OneDrive\Desktop\קבצי לימודים\סמסטר ג\תכנות מערכות\SPL2\SPL2\src\main\java\bgu\spl\mics\application\messages\DetectObjectsEvent.java
+C:\Users\ron01\OneDrive\Desktop\קבצי לימודים\סמסטר ג\תכנות מערכות\SPL2\SPL2\src\main\java\bgu\spl\mics\application\messages\DetectedObjectsEvent.java
 C:\Users\ron01\OneDrive\Desktop\קבצי לימודים\סמסטר ג\תכנות מערכות\SPL2\SPL2\src\main\java\bgu\spl\mics\application\messages\PoseEvent.java
 C:\Users\ron01\OneDrive\Desktop\קבצי לימודים\סמסטר ג\תכנות מערכות\SPL2\SPL2\src\main\java\bgu\spl\mics\application\messages\TerminatedBroadcast.java
 C:\Users\ron01\OneDrive\Desktop\קבצי לימודים\סמסטר ג\תכנות מערכות\SPL2\SPL2\src\main\java\bgu\spl\mics\application\messages\TickBroadcast.java

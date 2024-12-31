@@ -37,6 +37,5 @@ public class PoseService extends MicroService {
         subscribeBroadcast(CrashedBroadcast.class ,Call ->{
         terminate();
         });
- 
     }
 }

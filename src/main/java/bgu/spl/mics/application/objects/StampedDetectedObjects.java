@@ -12,12 +12,12 @@ public class StampedDetectedObjects
     // TODO: Define fields and methods.
     //fields:
     private int time;
-    private LinkedList<DetectedObject> DetectedObjects;
+    private LinkedList<DetectedObject> detectedObjects;
     
-    public StampedDetectedObjects (int time,  LinkedList<DetectedObject> DetectedObjects)
+    public StampedDetectedObjects (int time, LinkedList<DetectedObject> detectedObjects)
     {
         this.time=time; // ????
-        this.DetectedObjects = DetectedObjects;//?????
+        this.detectedObjects = detectedObjects;//?????
     }
 
     public int getTime()
@@ -27,7 +27,7 @@ public class StampedDetectedObjects
 
     public LinkedList<DetectedObject> getList()
     {
-        return DetectedObjects;
+        return detectedObjects;
     }
     //public boolean checkError()
     {//to do

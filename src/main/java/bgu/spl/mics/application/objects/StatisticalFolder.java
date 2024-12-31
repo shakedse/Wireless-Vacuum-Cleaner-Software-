@@ -11,17 +11,17 @@ import bgu.spl.mics.MessageBusImpl;
  */
 public class StatisticalFolder {
     private static final StatisticalFolder instance = new StatisticalFolder();
-    private int systemRunTime;
-    private int numDetectedObjects;
-    private int numTrackedObjects;
-    private int numLandmarks;
+    private volatile AtomicInteger systemRunTime;
+    private volatile AtomicInteger numDetectedObjects;
+    private volatile AtomicInteger numTrackedObjects;
+    private volatile AtomicInteger numLandmarks;
 
     public StatisticalFolder()
     {
-        systemRunTime = 0;
-        numDetectedObjects = 0;
-        numTrackedObjects = 0;
-        numLandmarks = 0;
+        systemRunTime = new AtomicInteger(0);
+        numDetectedObjects = new AtomicInteger(0);
+        numTrackedObjects = new AtomicInteger(0);
+        numLandmarks = new AtomicInteger(0);
     }
     public static StatisticalFolder getInstance() {
         return instance;
@@ -29,21 +29,21 @@ public class StatisticalFolder {
 
     // Synchronized method to increment systemRunTime
     public synchronized void incrementSystemRunTime() {
-        systemRunTime++;
+        systemRunTime.incrementAndGet();
     }
 
     // Synchronized method to increment numDetectedObjects
     public synchronized void incrementNumDetectedObjects() {
-        numDetectedObjects++;
+        numDetectedObjects.incrementAndGet();
     }
 
     // Synchronized method to increment numTrackedObjects
     public synchronized void incrementNumTrackedObjects() {
-        numTrackedObjects++;
+        numTrackedObjects.incrementAndGet();
     }
 
     // Synchronized method to increment numLandmarks
     public synchronized void incrementNumLandmarks() {
-        numLandmarks++;
+        numLandmarks.incrementAndGet();
     }
 }

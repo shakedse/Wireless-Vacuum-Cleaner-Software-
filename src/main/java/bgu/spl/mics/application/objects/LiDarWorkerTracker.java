@@ -38,7 +38,7 @@ public class LiDarWorkerTracker
     //returns the tracked objects that has a cloudpoints list at a time
     public TrackedObject getTrackedObjects(DetectedObject detectedObject)
     {
-        LiDarDataBase dataBase = LiDarDataBase.getInstance("path");
+        LiDarDataBase dataBase = LiDarDataBase.getInstance();
         for(StampedCloudPoints point: dataBase.getCloudPoints())
         {
             LinkedList<CloudPoint> cloudPoints = new LinkedList<CloudPoint>();

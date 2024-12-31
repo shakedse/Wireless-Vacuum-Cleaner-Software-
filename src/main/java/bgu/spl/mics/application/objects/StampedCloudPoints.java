@@ -8,13 +8,13 @@ import java.util.List;
  */
 public class StampedCloudPoints {
     private String id;
-    private int Time;
+    private int time;
     private List<List<Double>> cloudPoints;
 
-    public StampedCloudPoints (String id,int Time, List<List<Double>> cloudPoints)
+    public StampedCloudPoints (String id,int time, List<List<Double>> cloudPoints)
     {
         this.id=id;
-        this.Time=Time;
+        this.time=time;
         this.cloudPoints = cloudPoints;
         }
     public String getID()
@@ -23,7 +23,7 @@ public class StampedCloudPoints {
     }
     public int getTime()
     {
-        return Time;
+        return time;
     }
     public List<List<Double>> getCloudPoints()
     {

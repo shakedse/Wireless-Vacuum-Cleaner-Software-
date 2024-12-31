@@ -10,7 +10,7 @@ import com.google.gson.reflect.TypeToken;
  */
 public class LiDarDataBase 
 {
-    private static LiDarDataBase instance = new LiDarDataBase("./lidar_data.json");
+    private static LiDarDataBase instance = new LiDarDataBase();
     private List<StampedCloudPoints> cloudPoints;
         /**
      * Returns the singleton instance of LiDarDataBase.
@@ -20,7 +20,13 @@ public class LiDarDataBase
      */
       //".\\example_input_2\\lidar_data.json"  
 
-    private LiDarDataBase(String filepath) 
+    private LiDarDataBase() 
+    {
+        this.cloudPoints = null;
+    }
+
+    // build the data from the json file
+    public void buildData(String filepath)
     {
         Gson gson = new Gson();
         try (FileReader reader = new FileReader(filepath)) 
@@ -33,7 +39,7 @@ public class LiDarDataBase
         }
     }
 
-    public static LiDarDataBase getInstance(String filePath)
+    public static LiDarDataBase getInstance()
     {   
         return instance;
     }
@@ -45,12 +51,13 @@ public class LiDarDataBase
 
     public static void main(String[] args)
     {
+        LiDarDataBase dataBase = LiDarDataBase.getInstance();
         for (int i = 0; i < 3 ; i++) {
-            System.out.print(getInstance(".\\example_input_2\\lidar_data.json").getCloudPoints().get(i).getID());
+            System.out.print(dataBase.getCloudPoints().get(i).getID());
             System.out.print("     ");
-            System.out.print(getInstance(".\\example_input_2\\lidar_data.json").getCloudPoints().get(i).getTime());
+            System.out.print(dataBase.getCloudPoints().get(i).getTime());
             System.out.print("     "); // not getting the right time!!!
-            System.out.print(getInstance(".\\example_input_2\\lidar_data.json").getCloudPoints().get(i).getCloudPoints().toString());
+            System.out.print(dataBase.getCloudPoints().get(i).getCloudPoints().toString());
             System.out.println("     ");
         }
     }

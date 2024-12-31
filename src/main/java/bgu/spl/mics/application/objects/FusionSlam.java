@@ -20,6 +20,7 @@ public class FusionSlam
         poses = new LinkedList<Pose>();
         trackedObjects = new LinkedList<TrackedObject>();
     }
+    
     private static class FusionSlamHolder {
         private static FusionSlam instance;
 
