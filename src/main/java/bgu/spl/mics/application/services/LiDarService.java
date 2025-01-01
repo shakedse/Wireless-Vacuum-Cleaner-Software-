@@ -7,6 +7,8 @@ import bgu.spl.mics.application.messages.TrackedObjectsEvent;
 import bgu.spl.mics.application.objects.*;
 
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
+
 import bgu.spl.mics.MessageBusImpl;
 import bgu.spl.mics.MicroService;
 
@@ -27,15 +29,17 @@ public class LiDarService extends MicroService {
      */
 
     private final LiDarWorkerTracker myWorkerTracker;
+    private final CountDownLatch latch; 
     private int time;
     private LinkedList<DetectedObjectsEvent> detectedObjects;
 
-    public LiDarService(LiDarWorkerTracker LiDarWorkerTracker) 
+    public LiDarService(LiDarWorkerTracker LiDarWorkerTracker, CountDownLatch latch) 
     {
         super("LidarWorker" + LiDarWorkerTracker.getID());
         this.myWorkerTracker = LiDarWorkerTracker;
         this.detectedObjects = new LinkedList<DetectedObjectsEvent>();
         time = 0;
+        this.latch = latch;
     }
 
     /**
@@ -88,6 +92,7 @@ public class LiDarService extends MicroService {
         });
         //checking if we got a detected objects event 
         subscribeEvent(DetectedObjectsEvent.class ,(DetectedObjectsEvent event) ->{
+            
             detectedObjects.add(event);
         });
     }

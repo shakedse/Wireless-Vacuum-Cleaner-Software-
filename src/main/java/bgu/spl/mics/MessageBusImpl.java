@@ -21,9 +21,14 @@ public class MessageBusImpl implements MessageBus
 
 		
 //A singelton class implementation
-	private static class SingletonHolder 
+	private static class MessageBusHolder 
 	{
         private static final MessageBusImpl instance = new MessageBusImpl();
+	}
+
+	public static MessageBusImpl getInstance() 
+	{
+		return MessageBusHolder.instance;
 	}
 
 	private MessageBusImpl() //A private constructor
