@@ -55,6 +55,11 @@ public class GPSIMU
         return PoseList.get(tickNow);
     }
     
+    public void statusDown()
+    {
+        this.status = STATUS.DOWN;
+    }
+    
     public void setTick(int tick)
     {
         currentTick = tick;

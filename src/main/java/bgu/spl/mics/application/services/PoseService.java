@@ -32,18 +32,19 @@ public class PoseService extends MicroService {
         subscribeBroadcast(TickBroadcast.class, (TickBroadcast tick) ->{
             myPose.setTick(tick.getTick());
            //returns future??
-            sendEvent(new PoseEvent<Pose>(myPose.getPoseAtTick(tick.getTick())));//creating an event at a certin tick
+            sendEvent(new PoseEvent(myPose.getPoseAtTick(tick.getTick())));//creating an event at a certin tick
         });
 
         subscribeBroadcast(TerminatedBroadcast.class ,(TerminatedBroadcast terminate) -> {
             if(terminate.getTerminatedID().equals("TimeService") )//if the terminated MS is timeService
             {
+                this.myPose.statusDown();//set the status of the pose to down
                 sendBroadcast(new TerminatedBroadcast("PoseService"));//tell everyone tha
                 terminate();
             }
         });
 
-        subscribeBroadcast(CrashedBroadcast.class ,Call ->{
+        subscribeBroadcast(CrashedBroadcast.class ,(CrashedBroadcast crash) ->{
             terminate();
         });
     }
