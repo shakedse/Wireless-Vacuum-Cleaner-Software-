@@ -5,6 +5,9 @@ import bgu.spl.mics.application.messages.TerminatedBroadcast;
 import bgu.spl.mics.application.messages.TickBroadcast;
 import bgu.spl.mics.application.messages.TrackedObjectsEvent;
 import bgu.spl.mics.application.objects.*;
+
+import java.util.concurrent.CountDownLatch;
+
 import bgu.spl.mics.MicroService;
 
 /**
@@ -22,11 +25,21 @@ public class FusionSlamService extends MicroService {
      */
 
     private FusionSlam fusionSlam;
+    private int cameras;
+    private int lidars;
+    private boolean pose;
+    private boolean timeService;
+    private final CountDownLatch latch;
 
-    public FusionSlamService(FusionSlam fusionSlam) {
+    public FusionSlamService(FusionSlam fusionSlam, int cam, ind lid, CountDownLatch latch) {
         super("FusionSlam");
         this.fusionSlam = fusionSlam;
         // TODO Implement this
+        this.cameras = cam;
+        this.lidars = lid;
+        this.pose = true;
+        this.timeService = true;
+        this.latch = latch;
     }
 
     /**
