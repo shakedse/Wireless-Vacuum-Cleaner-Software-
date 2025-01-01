@@ -21,18 +21,18 @@ public class TimeService extends MicroService {
      */
     private int tickTime;
     private int duration;
-    private boolean earlyFinish;
+    private boolean finished;
 
     public TimeService(int TickTime, int Duration) {
         super("TimeService");
         // TODO Implement this
         this.tickTime = TickTime;
         this.duration = Duration;
-        earlyFinish = false;
+        finished = false;
     }
 
     public void EarlyFinish() {
-        this.earlyFinish = true;
+        this.finished = true;
     }
 
     /**
@@ -52,10 +52,10 @@ public class TimeService extends MicroService {
                 //statistical runtime
                 Thread.sleep(tickTime);
                 StatisticalFolder.getInstance().incrementSystemRunTime();
-                if (earlyFinish) {
-                sendBroadcast(new TerminatedBroadcast("TimeService")); 
-                terminate();
-                break;
+                if (finished) {
+                    sendBroadcast(new TerminatedBroadcast("TimeService")); 
+                    terminate();
+                    break;
                 }
             }
             catch (InterruptedException e)
@@ -63,7 +63,12 @@ public class TimeService extends MicroService {
                 Thread.currentThread().interrupt();
             }
         }
+        finished = true;
         sendBroadcast(new TerminatedBroadcast("TimeService"));
         terminate();
+    }
+
+    public boolean isFinished() {
+        return finished;
     }
 }

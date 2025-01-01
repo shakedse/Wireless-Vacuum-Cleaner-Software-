@@ -247,38 +247,54 @@ public class GurionRockRunner {
                 }
             }
 
-            Thread timeServiceThread = new Thread(new TimeService(DataBases.getTickTime(), DataBases.getDuration()));
+            TimeService timeService = new TimeService(DataBases.getTickTime(), DataBases.getDuration());
+            Thread timeServiceThread = new Thread(timeService);
             timeServiceThread.start();
+
+            System.out.println("Number of Threads: " + numberOfThreads);
+            while(timeService.isFinished() == false) {
+                try 
+                {
+                    Thread.sleep(5);
+                    System.out.println("Waiting for all threads to start");
+                } 
+                catch (InterruptedException e) 
+                {
+                    e.printStackTrace();
+                }
+            }
+
+            System.out.println("number Of Threads: " + MessageBusImpl.getInstance().getNumberOfMS());
+            for(MicroService microService : MessageBusImpl.getInstance().getMessageQueue().keySet()) {
+                System.out.println("number Of Threads: " + microService.getName());
+            }
+            // TODO: Initialize system components and services.
+            // TODO: Start the simulation.
+    
+            SystemData systemData = new SystemData(StatisticalFolder.getInstance().getSystemRunTime()
+                                                , StatisticalFolder.getInstance().getNumDetectedObjects()
+                                                , StatisticalFolder.getInstance().getNumTrackedObjects()
+                                                , StatisticalFolder.getInstance().getNumLandmarks()
+                                                , new HashMap<>());
+            for(LandMark landMark : FusionSlam.getInstance().getLandMarks()) {
+                System.out.println(landMark.getID());
+                systemData.addLandmark(landMark.getID(), landMark);
+            }
+    
+            Gson gsonW = new GsonBuilder().setPrettyPrinting().create();
+            try (FileWriter writer = new FileWriter("output.json")) {
+            // Serialize Java objects to JSON file
+                gson.toJson(systemData, writer);
+            }
+    
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+            
         } 
         catch (IOException e) {
             e.printStackTrace();
-        }
-
-        System.out.println("number Of Threads: " + MessageBusImpl.getInstance().getNumberOfMS());
-        for(MicroService microService : MessageBusImpl.getInstance().getMessageQueue().keySet()) {
-            System.out.println("number Of Threads: " + microService.getName());
-        }
-        // TODO: Initialize system components and services.
-        // TODO: Start the simulation.
-
-        SystemData systemData = new SystemData(StatisticalFolder.getInstance().getSystemRunTime()
-                                            , StatisticalFolder.getInstance().getNumDetectedObjects()
-                                            , StatisticalFolder.getInstance().getNumTrackedObjects()
-                                            , StatisticalFolder.getInstance().getNumLandmarks()
-                                            , new HashMap<>());
-        for(LandMark landMark : FusionSlam.getInstance().getLandMarks()) {
-            System.out.println(landMark.getID());
-            systemData.addLandmark(landMark.getID(), landMark);
-        }
-
-        Gson gsonW = new GsonBuilder().setPrettyPrinting().create();
-        try (FileWriter writer = new FileWriter("output.json")) {
-        // Serialize Java objects to JSON file
-            gson.toJson(systemData, writer);
-        }
-
-        catch (IOException e) {
-            e.printStackTrace();
+        
         }
     }
 }
