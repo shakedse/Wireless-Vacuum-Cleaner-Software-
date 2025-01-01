@@ -1,5 +1,6 @@
 package bgu.spl.mics.application.services;
 
+import bgu.spl.mics.Broadcast;
 import bgu.spl.mics.MessageBusImpl;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.TerminatedBroadcast;
@@ -20,12 +21,18 @@ public class TimeService extends MicroService {
      */
     private int tickTime;
     private int duration;
+    private boolean earlyFinish;
 
     public TimeService(int TickTime, int Duration) {
         super("TimeService");
         // TODO Implement this
         this.tickTime = TickTime;
         this.duration = Duration;
+        earlyFinish = false;
+    }
+
+    public void EarlyFinish() {
+        this.earlyFinish = true;
     }
 
     /**
@@ -34,25 +41,28 @@ public class TimeService extends MicroService {
      */
     @Override
     protected void initialize() 
-    {
+    {   
         int tickNum = 1;
         while (tickNum <= duration) 
         {
-            System.out.println("tick: " + tickNum);
-            sendBroadcast(new TickBroadcast (tickNum)); 
             try
             {
+                sendBroadcast(new TickBroadcast (tickNum)); 
+                tickNum++;
                 //statistical runtime
                 Thread.sleep(tickTime);
-                tickNum++;
                 StatisticalFolder.getInstance().incrementSystemRunTime();
+                if (earlyFinish) {
+                sendBroadcast(new TerminatedBroadcast("TimeService")); 
+                terminate();
+                break;
+                }
             }
             catch (InterruptedException e)
             {
                 Thread.currentThread().interrupt();
             }
         }
-        
         sendBroadcast(new TerminatedBroadcast("TimeService"));
         terminate();
     }
