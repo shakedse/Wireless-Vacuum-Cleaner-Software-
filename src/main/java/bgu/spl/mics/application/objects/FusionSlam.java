@@ -14,11 +14,19 @@ public class FusionSlam
     private LinkedList<LandMark> landMarks;
     private LinkedList<Pose> poses;
     private LinkedList<TrackedObject> trackedObjects;
+    private boolean EarlyFinish;
 
     private FusionSlam(){
         landMarks = new LinkedList<LandMark>();
         poses = new LinkedList<Pose>();
         trackedObjects = new LinkedList<TrackedObject>();
+        EarlyFinish = false;
+    }
+    public void setEarlyFinish() {
+        this.EarlyFinish = true;
+    }
+    public boolean getEarlyFinish() {
+        return this.EarlyFinish;
     }
     
     private static class FusionSlamHolder {

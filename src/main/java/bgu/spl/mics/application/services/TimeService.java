@@ -5,6 +5,7 @@ import bgu.spl.mics.MessageBusImpl;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.TerminatedBroadcast;
 import bgu.spl.mics.application.messages.TickBroadcast;
+import bgu.spl.mics.application.objects.FusionSlam;
 import bgu.spl.mics.application.objects.StatisticalFolder;
 
 /**
@@ -21,18 +22,12 @@ public class TimeService extends MicroService {
      */
     private int tickTime;
     private int duration;
-    private boolean finished;
 
     public TimeService(int TickTime, int Duration) {
         super("TimeService");
         // TODO Implement this
         this.tickTime = TickTime;
         this.duration = Duration;
-        finished = false;
-    }
-
-    public void EarlyFinish() {
-        this.finished = true;
     }
 
     /**
@@ -52,7 +47,8 @@ public class TimeService extends MicroService {
                 //statistical runtime
                 Thread.sleep(tickTime);
                 StatisticalFolder.getInstance().incrementSystemRunTime();
-                if (finished) {
+                if (FusionSlam.getInstance().getEarlyFinish()){
+                    //האם להוציא פה את ההאוטפוט?
                     sendBroadcast(new TerminatedBroadcast("TimeService")); 
                     terminate();
                     break;
@@ -63,12 +59,8 @@ public class TimeService extends MicroService {
                 Thread.currentThread().interrupt();
             }
         }
-        finished = true;
         sendBroadcast(new TerminatedBroadcast("TimeService"));
         terminate();
     }
 
-    public boolean isFinished() {
-        return finished;
-    }
 }

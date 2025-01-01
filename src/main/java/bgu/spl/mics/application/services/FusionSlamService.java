@@ -31,7 +31,7 @@ public class FusionSlamService extends MicroService {
     private boolean timeService;
     private final CountDownLatch latch;
 
-    public FusionSlamService(FusionSlam fusionSlam, int cam, ind lid, CountDownLatch latch) {
+    public FusionSlamService(FusionSlam fusionSlam, int cam, int lid, CountDownLatch latch) {
         super("FusionSlam");
         this.fusionSlam = fusionSlam;
         // TODO Implement this
@@ -41,7 +41,18 @@ public class FusionSlamService extends MicroService {
         this.timeService = true;
         this.latch = latch;
     }
-
+    public void setCameras() {
+        this.cameras--;
+    }
+    public void setLidars() {
+        this.lidars--;
+    }
+    public void setPose() {
+        this.pose = false;
+    }
+    public void setTimeService() {
+        this.timeService = false;
+    }
     /**
      * Initializes the FusionSlamService.
      * Registers the service to handle TrackedObjectsEvents, PoseEvents, and TickBroadcasts,
@@ -84,7 +95,27 @@ public class FusionSlamService extends MicroService {
         subscribeBroadcast(TerminatedBroadcast.class ,(TerminatedBroadcast terminate) ->{
             if(terminate.getTerminatedID().equals("TimeService") )//if the terminated MS is timeService - terminate me too
             {
+                setTimeService();
+                fusionSlam.setEarlyFinish();
                 sendBroadcast(new TerminatedBroadcast("fusionSlam"));//tell everyone that the camera terminated itself
+                terminate();
+            }
+            if(terminate.getTerminatedID().equals("Camera"))//if the terminated MS is camera - decrease the number of cameras
+            {
+                setCameras();
+            }
+            if(terminate.getTerminatedID().equals("LiDar"))//if the terminated MS is LiDar - decrease the number of LiDars
+            {
+                setLidars();
+            }
+            if(terminate.getTerminatedID().equals("PoseService"))//if the terminated MS is PoseService - set the pose to false
+            {
+                setPose();
+            }
+            if(cameras == 0 && lidars == 0 && !pose)//if all the services are terminated
+            {
+                fusionSlam.setEarlyFinish();
+                sendBroadcast(new TerminatedBroadcast("fusionSlam"));//tell everyone that the fusionSlam terminated itself
                 terminate();
             }
         });

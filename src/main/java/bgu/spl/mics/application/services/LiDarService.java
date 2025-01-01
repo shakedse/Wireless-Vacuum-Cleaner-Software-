@@ -36,13 +36,16 @@ public class LiDarService extends MicroService
     private final CountDownLatch latch;
     private int time;
     private LinkedList<DetectedObjectsEvent> detectedObjects;
+    private int cameraNum;//we want to know how many cameras are there in the system
 
-    public LiDarService(LiDarWorkerTracker LiDarWorkerTracker, CountDownLatch latch) {
+    public LiDarService(LiDarWorkerTracker LiDarWorkerTracker, CountDownLatch latch, int cameraNum) 
+    {
         super("LidarWorker" + LiDarWorkerTracker.getID());
         this.myWorkerTracker = LiDarWorkerTracker;
         this.detectedObjects = new LinkedList<DetectedObjectsEvent>();
         time = 0;
         this.latch = latch;
+        this.cameraNum = cameraNum;
     }
 
     /**
@@ -81,20 +84,46 @@ public class LiDarService extends MicroService
                     MessageBusImpl.getInstance().complete(decEvent, true); 
 
                 }
-                     // returns Future???
         }
         });
 
         subscribeBroadcast(TerminatedBroadcast.class, (TerminatedBroadcast terminate) -> {
+            boolean isFinish = false;
             if (terminate.getTerminatedID().equals("TimeService"))// if the terminated MS is timeService
             {
                 this.myWorkerTracker.statusDown();
                 sendBroadcast(new TerminatedBroadcast(((Integer) myWorkerTracker.getID()).toString()));// tell everyone that the LiDar terminated itself
                 terminate();
             }
+            else if(terminate.getTerminatedID().equals("Camera"))//if the terminated MS is camera - terminate me too
+            {
+                cameraNum--;
+                if(cameraNum==0)//if no cameras are left
+                {
+                    for(DetectedObjectsEvent d : detectedObjects)
+                    {
+                        if (d.isRemoved()==false)
+                        {
+                            break;
+                        }
+                    }
+                    isFinish = true;//all the detected objects were sent
+                }
+                if(isFinish)//no more cameras and no more detected objects so we can terminate
+                {
+                    this.myWorkerTracker.statusDown();
+                    sendBroadcast(new TerminatedBroadcast(((Integer) myWorkerTracker.getID()).toString()));// tell everyone that the LiDar terminated itself
+                    terminate();
+                }             
+            }
+            else if (this.myWorkerTracker.getStatus() == STATUS.DOWN)// if the LiDar status is down
+            {
+                sendBroadcast(new TerminatedBroadcast(((Integer) myWorkerTracker.getID()).toString()));// tell everyone that the LiDar terminated it
+                terminate();
+            }
         });
 
-        subscribeBroadcast(CrashedBroadcast.class, Call -> {
+        subscribeBroadcast(CrashedBroadcast.class, (CrashedBroadcast crash) -> {
             terminate();
         });
         // checking if we got a detected objects event
