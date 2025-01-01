@@ -28,22 +28,22 @@ public class StatisticalFolder {
     }
 
     // Synchronized method to increment systemRunTime
-    public synchronized void incrementSystemRunTime() {
+    public void incrementSystemRunTime() {
         systemRunTime.incrementAndGet();
     }
 
     // Synchronized method to increment numDetectedObjects
-    public synchronized void incrementNumDetectedObjects() {
+    public void incrementNumDetectedObjects() {
         numDetectedObjects.incrementAndGet();
     }
 
     // Synchronized method to increment numTrackedObjects
-    public synchronized void incrementNumTrackedObjects() {
+    public void incrementNumTrackedObjects() {
         numTrackedObjects.incrementAndGet();
     }
 
     // Synchronized method to increment numLandmarks
-    public synchronized void incrementNumLandmarks() {
+    public void incrementNumLandmarks() {
         numLandmarks.incrementAndGet();
     }
 }
