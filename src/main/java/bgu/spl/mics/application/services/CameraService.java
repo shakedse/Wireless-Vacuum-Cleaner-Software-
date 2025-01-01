@@ -60,10 +60,6 @@ public class CameraService extends MicroService
             }
             else {
                 sendEvent(event); 
-                for(int i=0; i<event.getDetectedObjects().size(); i++)
-                {
-                    StatisticalFolder.getInstance().incrementNumDetectedObjects();//increment the number of detected objects in the statistical folder each time we detect an object
-                }
             }
         }
         int last = camera.getList().size() - 1;

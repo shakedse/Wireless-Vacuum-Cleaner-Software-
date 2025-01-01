@@ -7,19 +7,29 @@ import java.util.List;
 import bgu.spl.mics.application.objects.*;
 import bgu.spl.mics.*;
 
-public class DetectedObjectsEvent<DetectedObject> implements Event<DetectedObject> {
+public class DetectedObjectsEvent implements Event<Boolean> {
     private LinkedList<DetectedObject> detectedObjects;
     private int detectedTime;
     private int cameraID;
+    private boolean isRemoved;
 
     public DetectedObjectsEvent(int detectedTime, LinkedList<DetectedObject> detectedObjects,int cameraID)
     {
         this.detectedTime = detectedTime;
         this.detectedObjects = detectedObjects;
         this.cameraID=cameraID;
+        this.isRemoved = false;
+    }
+    public boolean isRemoved()
+    {
+        return isRemoved;
     }
     
-    
+    public void remove()
+    {
+        isRemoved = true;
+    }
+
     public int getdetectedTime()
     {
         return detectedTime;

@@ -6,23 +6,32 @@ import java.util.List;
 import bgu.spl.mics.application.objects.*;
 import bgu.spl.mics.*;
 
-public class TrackedObjectsEvent<TrackedObject> implements Event<TrackedObject> {
+public class TrackedObjectsEvent implements Event<Boolean> {
     private LinkedList<TrackedObject> TrackedObjectsList;
+    private String ID;
+    private int time;
 
-    public TrackedObjectsEvent(LinkedList<TrackedObject> TrackedObjectsList)
-    {
-        this.TrackedObjectsList = TrackedObjectsList;
+    public TrackedObjectsEvent(String id, int time) {
+        this.ID = id;
+        this.time = time;
+        this.TrackedObjectsList = new LinkedList<TrackedObject>();
     }
-    public TrackedObjectsEvent()
-    {
-        this.TrackedObjectsList = new LinkedList<TrackedObject>() ;
+    public TrackedObjectsEvent(String id, int time, TrackedObject trackedObject) {
+        this.ID = id;
+        this.time = time;
+        this.TrackedObjectsList = new LinkedList<TrackedObject>();
+        this.TrackedObjectsList.add(trackedObject);
     }
-    public LinkedList<TrackedObject> getTrackedObjectsList()
-    {
+
+    public LinkedList<TrackedObject> getTrackedObjectsList() {
         return TrackedObjectsList;
     }
-    public void addTrackedObject (TrackedObject trackedObject)
-    {
+
+    public void addTrackedObject(TrackedObject trackedObject) {
         this.TrackedObjectsList.add(trackedObject);
+    }
+
+    public void setTrackedObjectsList(LinkedList<TrackedObject> TrackedObjectsList) {
+        this.TrackedObjectsList = TrackedObjectsList;
     }
 }

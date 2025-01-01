@@ -84,8 +84,10 @@ public class Camera {
         LinkedList<DetectedObject> detectedObjects = this.getDetectedObjectsAtTick(tick);
         if (!detectedObjects.isEmpty()) {
             // checking if we got a detected objects event that is error
-            for (int i = 0; i < detectedObjects.size(); i++) {
-                if (detectedObjects.get(i).getID().equals("ERROR")) {
+            for (int i = 0; i < detectedObjects.size(); i++) 
+            {
+                if (detectedObjects.get(i).getID().equals("ERROR")) 
+                {
                     status = STATUS.ERROR;
                     LinkedList<DetectedObject> toReturn = new LinkedList<DetectedObject>();
                     toReturn.add(detectedObjects.get(i));
@@ -93,7 +95,9 @@ public class Camera {
                 }
             }
             DetectedObjectsEvent event = new DetectedObjectsEvent(tick, detectedObjects, id);
-            for (int i = 0; i < detectedObjects.size(); i++) {
+            
+            for (int i = 0; i < detectedObjects.size(); i++) 
+            {
                 StatisticalFolder.getInstance().incrementNumDetectedObjects();
             }
             return event;
