@@ -14,13 +14,18 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class MessageBusImpl implements MessageBus 
 {
-
-	private static final MessageBusImpl instance = new MessageBusImpl();
 	private ConcurrentHashMap<MicroService, BlockingQueue<Message>> messageQueue;// queues for messages = events and broadcast
 	private ConcurrentHashMap<Class<? extends Event<?>>, BlockingQueue<MicroService>> eventSubscribers;// map for event subscribers
 	private ConcurrentHashMap<Class<? extends Broadcast>, BlockingQueue<MicroService>> broadcastSubscribers;// map for broadcasts
 	private ConcurrentHashMap<Event<?>,Future<?>> EventAndFuture;
-	
+
+		
+//A singelton class implementation
+	private static class SingletonHolder 
+	{
+        private static final MessageBusImpl instance = new MessageBusImpl();
+	}
+
 	private MessageBusImpl() //A private constructor
 	{
         eventSubscribers = new ConcurrentHashMap<>();
@@ -46,11 +51,6 @@ public class MessageBusImpl implements MessageBus
 		return EventAndFuture;
 	}
 	
-	//A method so that we can reach the private methods
-	public static MessageBusImpl getInstance()
-	{
-		return instance;
-	}
 	// A ms entering a queue of a certin event class
 	@Override
 	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
