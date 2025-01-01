@@ -22,10 +22,9 @@ public class FusionSlam
     }
     
     private static class FusionSlamHolder {
-        private static FusionSlam instance;
+        private static FusionSlam instance = new FusionSlam();
 
         private FusionSlamHolder() {
-            instance = new FusionSlam();
         }
 
         public static FusionSlam getInstance() {
@@ -126,7 +125,7 @@ public class FusionSlam
     }   
 
 //get instance
-    public FusionSlam getInstance()
+    public static FusionSlam getInstance()
     {
         return FusionSlamHolder.getInstance();
     }

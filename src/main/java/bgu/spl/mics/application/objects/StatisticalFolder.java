@@ -46,4 +46,20 @@ public class StatisticalFolder {
     public void incrementNumLandmarks() {
         numLandmarks.incrementAndGet();
     }
+
+    public AtomicInteger getSystemRunTime() {
+        return systemRunTime;
+    }
+
+    public AtomicInteger getNumDetectedObjects() {
+        return numDetectedObjects;
+    }
+
+    public AtomicInteger getNumTrackedObjects() {
+        return numTrackedObjects;
+    }
+
+    public AtomicInteger getNumLandmarks() {
+        return numLandmarks;
+    }
 }

@@ -1,6 +1,7 @@
 package bgu.spl.mics.application.services;
 import bgu.spl.mics.application.messages.CrashedBroadcast;
 import bgu.spl.mics.application.messages.PoseEvent;
+import bgu.spl.mics.application.messages.TerminatedBroadcast;
 import bgu.spl.mics.application.messages.TickBroadcast;
 import bgu.spl.mics.application.objects.*;
 import bgu.spl.mics.MicroService;
@@ -34,8 +35,16 @@ public class PoseService extends MicroService {
             sendEvent(new PoseEvent<Pose>(myPose.getPoseAtTick(tick.getTick())));//creating an event at a certin tick
         });
 
+        subscribeBroadcast(TerminatedBroadcast.class ,(TerminatedBroadcast terminate) -> {
+            if(terminate.getTerminatedID().equals("TimeService") )//if the terminated MS is timeService
+            {
+                sendBroadcast(new TerminatedBroadcast("PoseService"));//tell everyone tha
+                terminate();
+            }
+        });
+
         subscribeBroadcast(CrashedBroadcast.class ,Call ->{
-        terminate();
+            terminate();
         });
     }
 }

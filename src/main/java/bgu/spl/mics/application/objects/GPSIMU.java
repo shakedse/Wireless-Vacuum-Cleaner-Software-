@@ -2,6 +2,7 @@ package bgu.spl.mics.application.objects;
 
 import java.io.FileReader;
 import java.util.LinkedList;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.gson.Gson;
 
@@ -14,14 +15,14 @@ public class GPSIMU
     // TODO: Define fields and methods.
     private int currentTick;
     private STATUS status;
-    private LinkedList<Pose> PoseList;
+    private ConcurrentHashMap<Integer, Pose> PoseList;
     private static GPSIMU instance = new GPSIMU(0); 
     
     public GPSIMU (int currentTick)
     {
         this.currentTick=0;
         this.status=STATUS.DOWN;
-        this.PoseList = new LinkedList<Pose>();
+        this.PoseList = new ConcurrentHashMap<Integer, Pose>();
     }
 
     // build the data from the json file
@@ -33,7 +34,7 @@ public class GPSIMU
             Pose[] poses = gson.fromJson(reader, Pose[].class);
             for (Pose pose : poses) 
             {
-                PoseList.add(pose);
+                PoseList.put(pose.getTime(), pose);
             }
         }
         catch (Exception e) 

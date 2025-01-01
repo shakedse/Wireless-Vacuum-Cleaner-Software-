@@ -4,9 +4,17 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+
 import com.google.gson.Gson;
 import java.lang.reflect.Type;
 import com.google.gson.reflect.TypeToken;
+import com.google.gson.GsonBuilder;
+import java.io.FileWriter;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import bgu.spl.mics.*;
 import bgu.spl.mics.application.objects.*;
@@ -92,6 +100,27 @@ public class GurionRockRunner {
         }
     }
     
+    public static class SystemData {
+        private int systemRuntime;
+        private int numDetectedObjects;
+        private int numTrackedObjects;
+        private int numLandmarks;
+        private Map<String, LandMark> landMarks;
+
+        // Getters and setters (or public fields for simplicity)
+        public SystemData(AtomicInteger systemRuntime, AtomicInteger numDetectedObjects, AtomicInteger numTrackedObjects, AtomicInteger numLandmarks, Map<String, LandMark> landMarks) {
+            this.systemRuntime = systemRuntime.get();
+            this.numDetectedObjects = numDetectedObjects.get();
+            this.numTrackedObjects = numTrackedObjects.get();
+            this.numLandmarks = numLandmarks.get();
+            this.landMarks = landMarks;
+        }
+
+        public void addLandmark(String key, LandMark landmark) {
+            this.landMarks.put(key, landmark);
+        }
+    }
+    
     
     public static void main(String[] args) 
     {        
@@ -121,7 +150,7 @@ public class GurionRockRunner {
             }
 
             // testing GPS data
-            for (int i = 0; i < 3 ; i++) {
+            for (int i = 1; i < 3 ; i++) {
                 System.out.print(GPSIMU.getInstance().getPoseAtTick(i).getX());
                 System.out.print("     ");
                 System.out.print(GPSIMU.getInstance().getPoseAtTick(i).getY());
@@ -141,11 +170,115 @@ public class GurionRockRunner {
                 System.out.print(LiDarDataBase.getInstance().getCloudPoints().get(i).getCloudPoints().toString());
                 System.out.println("     ");
             }
+
+
+            int numberOfThreads = 0;
+
+            Thread FusionSlamThread = new Thread(new FusionSlamService(FusionSlam.getInstance()));
+            FusionSlamThread.start();
+            numberOfThreads++;
+
+            System.out.println("Number of Threads: " + numberOfThreads);
+            while(numberOfThreads > MessageBusImpl.getInstance().getNumberOfMS()) {
+                try 
+                {
+                    Thread.sleep(5);
+                    System.out.println("Waiting for all threads to start");
+                } 
+                catch (InterruptedException e) 
+                {
+                    e.printStackTrace();
+                }
+            }
+
+            Thread posethThread = new Thread(new PoseService(GPSIMU.getInstance()));
+            posethThread.start();
+            numberOfThreads++;
+
+            System.out.println("Number of Threads: " + numberOfThreads);
+            while(numberOfThreads > MessageBusImpl.getInstance().getNumberOfMS()) {
+                try 
+                {
+                    Thread.sleep(5);
+                    System.out.println("Waiting for all threads to start");
+                } 
+                catch (InterruptedException e) 
+                {
+                    e.printStackTrace();
+                }
+            }
+
+            for(Camera camera : DataBases.getCameras().getCamerasConfigurations()) {
+                Thread cameraThread = new Thread(new CameraService(camera, new CountDownLatch(1)));
+                cameraThread.start();
+                numberOfThreads++;
+            }
+
+            System.out.println("Number of Threads: " + numberOfThreads);
+            while(numberOfThreads > MessageBusImpl.getInstance().getNumberOfMS()) {
+                try 
+                {
+                    Thread.sleep(5);
+                    System.out.println("Waiting for all threads to start");
+                } 
+                catch (InterruptedException e) 
+                {
+                    e.printStackTrace();
+                }
+            }
+
+            for(LiDarWorkerTracker LiDarWorker : DataBases.getLiDarWorkers().getLidarConfigurations()) {
+                Thread LiDarWorkerThread = new Thread(new LiDarService(LiDarWorker, new CountDownLatch(1)));
+                LiDarWorkerThread.start();
+                numberOfThreads++;
+            }
+
+
+            System.out.println("Number of Threads: " + numberOfThreads);
+            while(numberOfThreads > MessageBusImpl.getInstance().getNumberOfMS()) {
+                try 
+                {
+                    Thread.sleep(5);
+                    System.out.println("Waiting for all threads to start");
+                } 
+                catch (InterruptedException e) 
+                {
+                    e.printStackTrace();
+                }
+            }
+
+            Thread timeServiceThread = new Thread(new TimeService(DataBases.getTickTime(), DataBases.getDuration()));
+            timeServiceThread.start();
         } 
         catch (IOException e) {
             e.printStackTrace();
         }
+
+        System.out.println("number Of Threads: " + MessageBusImpl.getInstance().getNumberOfMS());
+        for(MicroService microService : MessageBusImpl.getInstance().getMessageQueue().keySet()) {
+            System.out.println("number Of Threads: " + microService.getName());
+        }
         // TODO: Initialize system components and services.
         // TODO: Start the simulation.
+
+        SystemData systemData = new SystemData(StatisticalFolder.getInstance().getSystemRunTime()
+                                            , StatisticalFolder.getInstance().getNumDetectedObjects()
+                                            , StatisticalFolder.getInstance().getNumTrackedObjects()
+                                            , StatisticalFolder.getInstance().getNumLandmarks()
+                                            , new HashMap<>());
+        for(LandMark landMark : FusionSlam.getInstance().getLandMarks()) {
+            System.out.println(landMark.getID());
+            systemData.addLandmark(landMark.getID(), landMark);
+        }
+
+        Gson gsonW = new GsonBuilder().setPrettyPrinting().create();
+        try (FileWriter writer = new FileWriter("output.json")) {
+        // Serialize Java objects to JSON file
+            gson.toJson(systemData, writer);
+        }
+
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
