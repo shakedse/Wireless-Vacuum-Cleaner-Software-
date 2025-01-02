@@ -64,7 +64,18 @@ public class FusionSlamService extends MicroService {
     //TickBroadcast
         subscribeBroadcast(TickBroadcast.class ,(TickBroadcast tick) ->
         {
-            
+            for(TrackedObject waitingObject: fusionSlam.getWaitingObjects())//for each object that is waiting for a new measurement
+            {
+                for(Pose p: fusionSlam.getPoses())//for each pose
+                {
+                    if(waitingObject.getTime() == p.getTime())//if we found a new pose
+                    {
+                        fusionSlam.getTrackedObjects().add(waitingObject);//add it to the tracked objects list
+                        fusionSlam.addNewLandMark(waitingObject);//add it to the map
+                        fusionSlam.getWaitingObjects().remove(waitingObject);//remove it from the waiting objects list
+                    }
+                }
+            }
         });
         
     //TrackedObjectsEvent        

@@ -55,7 +55,6 @@ public class TimeService extends MicroService {
             {
                 sendBroadcast(new TickBroadcast (tickNum)); 
                 tickNum++;
-                //statistical runtime
                 Thread.sleep(tickTime);
                 StatisticalFolder.getInstance().incrementSystemRunTime();
                 if (FusionSlam.getInstance().getEarlyFinish()){
