@@ -83,7 +83,7 @@ public class MessageBusImpl implements MessageBus
 	{
 		synchronized (messageQueue){
 			BlockingQueue<MicroService> curr = broadcastSubscribers.get(b.getClass());
-			synchronized (curr) //synchronized that no ms will be added to the queue
+			synchronized (broadcastSubscribers) //synchronized that no ms will be added to the queue
 			{ //if it's unregister it doeant matter if i added or not?
 				if (curr != null)// we found the queue
 				{
@@ -133,7 +133,7 @@ public class MessageBusImpl implements MessageBus
 		if(messageQueue.containsKey(m))
 		{
 			BlockingQueue<Message> curr = messageQueue.get(m);
-			synchronized(curr)
+			synchronized(messageQueue)
 			{
 				while(!curr.isEmpty())
 					{

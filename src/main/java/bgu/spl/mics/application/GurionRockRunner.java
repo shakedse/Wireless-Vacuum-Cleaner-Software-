@@ -174,7 +174,8 @@ public class GurionRockRunner {
 
             int numberOfThreads = 0;
 
-            Thread FusionSlamThread = new Thread(new FusionSlamService(FusionSlam.getInstance()));
+            Thread FusionSlamThread = new Thread(new FusionSlamService(FusionSlam.getInstance(), DataBases.getCameras().getCamerasConfigurations().size(),
+                                                    DataBases.getLiDarWorkers().getLidarConfigurations().size() ,new CountDownLatch(1)));
             FusionSlamThread.start();
             numberOfThreads++;
 
@@ -191,7 +192,8 @@ public class GurionRockRunner {
                 }
             }
 
-            Thread posethThread = new Thread(new PoseService(GPSIMU.getInstance()));
+            Thread posethThread = new Thread(new PoseService(GPSIMU.getInstance(),DataBases.getCameras().getCamerasConfigurations().size(),
+                                            DataBases.getLiDarWorkers().getLidarConfigurations().size() ));
             posethThread.start();
             numberOfThreads++;
 
@@ -228,7 +230,8 @@ public class GurionRockRunner {
             }
 
             for(LiDarWorkerTracker LiDarWorker : DataBases.getLiDarWorkers().getLidarConfigurations()) {
-                Thread LiDarWorkerThread = new Thread(new LiDarService(LiDarWorker, new CountDownLatch(1)));
+                Thread LiDarWorkerThread = new Thread(new LiDarService(LiDarWorker, new CountDownLatch(1),
+                                                     DataBases.getCameras().getCamerasConfigurations().size()));
                 LiDarWorkerThread.start();
                 numberOfThreads++;
             }

@@ -22,12 +22,23 @@ public class TimeService extends MicroService {
      */
     private int tickTime;
     private int duration;
+    private boolean Finish;
 
     public TimeService(int TickTime, int Duration) {
         super("TimeService");
         // TODO Implement this
         this.tickTime = TickTime;
         this.duration = Duration;
+        Finish = false;
+    }
+
+    
+
+    public void setEarlyFinish() {
+        this.Finish = true;
+    }
+    public boolean isFinished() {
+        return this.Finish;
     }
 
     /**
@@ -59,6 +70,7 @@ public class TimeService extends MicroService {
                 Thread.currentThread().interrupt();
             }
         }
+        Finish = true;
         sendBroadcast(new TerminatedBroadcast("TimeService"));
         terminate();
     }
