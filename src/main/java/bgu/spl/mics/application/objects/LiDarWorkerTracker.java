@@ -19,14 +19,13 @@ public class LiDarWorkerTracker
     private int id;
     private int frequency;
     private STATUS status;
-    private LinkedList<TrackedObject> trackedObjects;
+    private LinkedList<TrackedObject> trackedObjects = new LinkedList<TrackedObject>();
      
     public LiDarWorkerTracker (int id, int frequency)
     {
         this.id=id;
         this.frequency=frequency;
         this.status=STATUS.UP;
-        this.trackedObjects = new LinkedList<TrackedObject>();//?????
     }
     public int getID()
     {
@@ -62,14 +61,16 @@ public class LiDarWorkerTracker
                {
                 if (time == point.getTime()){
                 // creating the object
-                TrackedObject trackedObject = new TrackedObject(point.getID(), point.getTime(), detectedObject.getDescription(), cloudPoints); 
-                 //adding the object found to the tracked objects final list
-                 this.trackedObjects.add(trackedObject);
-                return trackedObject;
+                    TrackedObject trackedObject = new TrackedObject(point.getID(), point.getTime(), detectedObject.getDescription(), cloudPoints); 
+                    //adding the object found to the tracked objects final list
+                    if(trackedObjects == null)
+                        trackedObjects = new LinkedList<TrackedObject>();
+                    trackedObjects.add(trackedObject);
+                    return trackedObject;
                }
             }
         }
-         return null;
+        return null;
     }
 
     public TrackedObjectsEvent convertDetectedToTracked(DetectedObjectsEvent detectedObjectsEvent)
@@ -92,7 +93,21 @@ public class LiDarWorkerTracker
                 }
             }
         }
-        
         return trackedObjectsEvent;
+    }
+
+    public void checkForErrors(int time)
+    {
+        LiDarDataBase dataBase = LiDarDataBase.getInstance();
+        for(StampedCloudPoints point: dataBase.getCloudPoints())
+        {
+            if (point.getTime() == time)
+            {
+                if (point.getID().equals("ERROR"))
+                {
+                    this.status = STATUS.ERROR;
+                }
+            }
+        }
     }
 }

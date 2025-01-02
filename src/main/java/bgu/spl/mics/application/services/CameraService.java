@@ -5,13 +5,9 @@ import bgu.spl.mics.application.messages.TerminatedBroadcast;
 import bgu.spl.mics.application.messages.TickBroadcast;
 import bgu.spl.mics.application.objects.*;
 
-import java.util.LinkedList;
-import java.util.concurrent.BlockingDeque;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.LinkedBlockingQueue;
 
-import bgu.spl.mics.Callback;
+import java.util.concurrent.CountDownLatch;
+
 import bgu.spl.mics.MicroService;
 /**
  * CameraService is responsible for processing data from the camera and
@@ -48,27 +44,34 @@ public class CameraService extends MicroService
         // TODO Implement this
 
         subscribeBroadcast(TickBroadcast.class ,(TickBroadcast tick) ->{
-        int time = tick.getTick(); 
-        DetectedObjectsEvent event = camera.activateTick(time - camera.getFrequency());//returns the events of the detected objects at the tick
-        if(event != null)
-        {  
-            if (((DetectedObject) event.getDetectedObjects().get(0)).getID().equals("ERROR"))//if the detected object id is ERROR
+            time = tick.getTick(); 
+
+            DetectedObject CheckForError = camera.checkForErrors(time); // getting the current ticks event to check if the camera crashed
+
+            if(camera.getStatus() == STATUS.ERROR || CheckForError != null) //if the camera crashed - terminate
             {
-                String description = ((DetectedObject)event.getDetectedObjects().get(0)).getDescription();
-                sendBroadcast(new CrashedBroadcast("Camera" + camera.getID() + ", because of: " + description));//send a broadcast that the camera crashed
+                camera.statusDown();
+                String description = CheckForError.getDescription();
+                sendBroadcast(new CrashedBroadcast("Camera" + camera.getID() + ", because of: " + description));
                 terminate();
             }
-            else {
-                sendEvent(event); 
+            else
+            {
+                DetectedObjectsEvent event = camera.activateTick(time - camera.getFrequency()); //returns the events of the detected objects at the tick
+                if(event != null)
+                {  
+                    sendEvent(event); 
+                }
+                
+                int last = camera.getList().size() - 1;
+                if (camera.getList().get(last).getTime() <= time - camera.getFrequency())
+                {
+                    camera.statusDown();
+                    System.out.println("CameraService is down at time:" + (tick.getTick()));
+                    sendBroadcast(new TerminatedBroadcast(((Integer)camera.getID()).toString()));
+                    terminate();
+                }
             }
-        }
-        int last = camera.getList().size() - 1;
-        if (camera.getList().get(last).getTime() <= time)
-        {
-            camera.statusDown();
-            sendBroadcast(new TerminatedBroadcast(((Integer)camera.getID()).toString()));
-            terminate();
-        }
         });
 
         subscribeBroadcast(TerminatedBroadcast.class ,(TerminatedBroadcast terminate) ->{
@@ -85,6 +88,5 @@ public class CameraService extends MicroService
         });
 
         latch.countDown();
-        
     }
 }

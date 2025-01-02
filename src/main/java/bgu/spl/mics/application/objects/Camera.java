@@ -4,7 +4,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -28,22 +27,6 @@ public class Camera {
         this.frequency = frequency;
         this.status = STATUS.UP;
         this.camera_key = camera_key;
-
-        /*
-         * Gson gson = new Gson();
-         * try (FileReader reader = new FileReader("./camera_data.json"))
-         * {
-         * // Convert JSON File to Java Object
-         * Type camerasDataBaseType = new
-         * TypeToken<LinkedList<LinkedList<StampedDetectedObjects>>>(){}.getType();
-         * LinkedList<LinkedList<StampedDetectedObjects>> DataBases =
-         * gson.fromJson(reader, camerasDataBaseType);
-         * this.stampDetectedObjects = DataBases.get(id);
-         * }
-         * catch (IOException e) {
-         * e.printStackTrace();
-         * }
-         */
     }
 
     public int getFrequency() {
@@ -124,39 +107,22 @@ public class Camera {
         }
     }
 
-    //מתי משתמשים?
-    public class CameraDataType {
-        LinkedList<StampedDetectedObjects> camerasDataBase;
-        String camera_key;
-
-        public LinkedList<StampedDetectedObjects> getCamerasDataBase() {
-            return camerasDataBase;
-        }
-
-        public String getCameraKey() {
-            return camera_key;
-        }
-    }
-
-    /* 
-    public static void main(String[] args) {
-        
-        Camera camera = new Camera(1, 1, "camera2");
-        camera.buildData("C:\\Users\\einav\\.vscode\\Assignment2\\example_input_2\\camera_data.json");
-        LinkedList<StampedDetectedObjects> stampDetectedObjects = camera.getList();
-        for (StampedDetectedObjects obj : stampDetectedObjects) {
-            System.out.println("Time: " + obj.getTime());
-            for (DetectedObject d : obj.getList()) {
-                System.out.println("ID: " + d.getID());
-                System.out.println("des: " + d.getDescription());
-
+    // if the current tick is crashing the camera - change the status to error
+    public DetectedObject checkForErrors(int time) {
+        for(StampedDetectedObjects obj : stampDetectedObjects)
+        {
+            if(obj.getTime() == time)
+            {
+                for(DetectedObject detectedObject : obj.getList())
+                {
+                    if(detectedObject.getID().equals("ERROR"))
+                    {
+                        status = STATUS.ERROR;
+                        return detectedObject;
+                    }
+                }
             }
-            System.out.println("");
-
         }
-
+        return null;
     }
-        */
-
-
 }

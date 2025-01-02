@@ -16,12 +16,14 @@ public class GPSIMU
     private int currentTick;
     private STATUS status;
     private ConcurrentHashMap<Integer, Pose> PoseList;
+    private int lastTick;
     private static GPSIMU instance = new GPSIMU(0); 
     
     public GPSIMU (int currentTick)
     {
         this.currentTick=0;
-        this.status=STATUS.DOWN;
+        this.lastTick=0;
+        this.status=STATUS.UP;
         this.PoseList = new ConcurrentHashMap<Integer, Pose>();
     }
 
@@ -41,6 +43,13 @@ public class GPSIMU
         {
             e.printStackTrace();
         }
+        for(Pose pose : PoseList.values())
+        {
+            if(pose.getTime() > lastTick)
+                lastTick = pose.getTime();
+            
+        }
+        System.out.println("Pose LastTick: " + lastTick);
     }
 
     public static GPSIMU getInstance()
@@ -50,7 +59,7 @@ public class GPSIMU
 
     public Pose getPoseAtTick (int tickNow)
     {
-        if(PoseList.size() == tickNow)//if we finished the poses
+        if(lastTick == tickNow)//if we finished the poses
             this.status = STATUS.DOWN;
         return PoseList.get(tickNow);
     }
@@ -58,6 +67,11 @@ public class GPSIMU
     public void statusDown()
     {
         this.status = STATUS.DOWN;
+    }
+
+    public STATUS getStatus()
+    {
+        return status;
     }
     
     public void setTick(int tick)

@@ -6,8 +6,17 @@ import bgu.spl.mics.application.messages.TickBroadcast;
 import bgu.spl.mics.application.messages.TrackedObjectsEvent;
 import bgu.spl.mics.application.objects.*;
 
+import com.google.gson.Gson;
+import java.lang.reflect.Type;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.GsonBuilder;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
+import bgu.spl.mics.MessageBusImpl;
 import bgu.spl.mics.MicroService;
 
 /**
@@ -25,34 +34,16 @@ public class FusionSlamService extends MicroService {
      */
 
     private FusionSlam fusionSlam;
-    private int cameras;
-    private int lidars;
-    private boolean pose;
-    private boolean timeService;
     private final CountDownLatch latch;
 
-    public FusionSlamService(FusionSlam fusionSlam, int cam, int lid, CountDownLatch latch) {
+    public FusionSlamService(FusionSlam fusionSlam, CountDownLatch latch) 
+    {
         super("FusionSlam");
         this.fusionSlam = fusionSlam;
         // TODO Implement this
-        this.cameras = cam;
-        this.lidars = lid;
-        this.pose = true;
-        this.timeService = true;
         this.latch = latch;
     }
-    public void setCameras() {
-        this.cameras--;
-    }
-    public void setLidars() {
-        this.lidars--;
-    }
-    public void setPose() {
-        this.pose = false;
-    }
-    public void setTimeService() {
-        this.timeService = false;
-    }
+
     /**
      * Initializes the FusionSlamService.
      * Registers the service to handle TrackedObjectsEvents, PoseEvents, and TickBroadcasts,
@@ -64,36 +55,23 @@ public class FusionSlamService extends MicroService {
     //TickBroadcast
         subscribeBroadcast(TickBroadcast.class ,(TickBroadcast tick) ->
         {
-            for(TrackedObject waitingObject: fusionSlam.getWaitingObjects())//for each object that is waiting for a new measurement
-            {
-                for(Pose p: fusionSlam.getPoses())//for each pose
-                {
-                    if(waitingObject.getTime() == p.getTime())//if we found a new pose
-                    {
-                        fusionSlam.getTrackedObjects().add(waitingObject);//add it to the tracked objects list
-                        fusionSlam.addNewLandMark(waitingObject);//add it to the map
-                        fusionSlam.getWaitingObjects().remove(waitingObject);//remove it from the waiting objects list
-                    }
+            List<TrackedObject> toRemove = new LinkedList<>();
+            for (TrackedObject waitingObject : fusionSlam.getWaitingObjects()) { // For each object
+                if (waitingObject.getTime() == tick.getTick()) { // If we found a new pose
+                    fusionSlam.ChecksIfExist(waitingObject);
+                    toRemove.add(waitingObject); // Mark it for removal
                 }
             }
+            // Remove all marked objects after the iteration
+            fusionSlam.getWaitingObjects().removeAll(toRemove);
         });
         
     //TrackedObjectsEvent        
         subscribeEvent(TrackedObjectsEvent.class ,(TrackedObjectsEvent event) ->{
             //checking if the object is new or previously detected
-            for(Object obj : event.getTrackedObjectsList())
-            {
-                TrackedObject trackedObject = (TrackedObject) obj;
-                if(!fusionSlam.getInstance().getTrackedObjects().contains(trackedObject))//if the object is new
-                {
-                    fusionSlam.getTrackedObjects().add(trackedObject);//add it to the tracked objects list
-                    fusionSlam.addNewLandMark(trackedObject);//add it to the map
-                }
-                else//if the object is previously detected
-                {
-                    //updates measurements by averaging with previous
-                    fusionSlam.updateOldLandMark(trackedObject);  
-                }
+            for(TrackedObject trackedObject : event.getTrackedObjectsList())
+            {                
+                fusionSlam.ChecksIfExist(trackedObject);
             }
         });
         
@@ -106,28 +84,21 @@ public class FusionSlamService extends MicroService {
         subscribeBroadcast(TerminatedBroadcast.class ,(TerminatedBroadcast terminate) ->{
             if(terminate.getTerminatedID().equals("TimeService") )//if the terminated MS is timeService - terminate me too
             {
-                setTimeService();
                 fusionSlam.setEarlyFinish();
                 sendBroadcast(new TerminatedBroadcast("fusionSlam"));//tell everyone that the camera terminated itself
                 terminate();
+                fusionSlam.buildOutput();
             }
-            if(terminate.getTerminatedID().equals("Camera"))//if the terminated MS is camera - decrease the number of cameras
-            {
-                setCameras();
-            }
-            if(terminate.getTerminatedID().equals("LiDar"))//if the terminated MS is LiDar - decrease the number of LiDars
-            {
-                setLidars();
-            }
-            if(terminate.getTerminatedID().equals("PoseService"))//if the terminated MS is PoseService - set the pose to false
-            {
-                setPose();
-            }
-            if(cameras == 0 && lidars == 0 && !pose)//if all the services are terminated
-            {
-                fusionSlam.setEarlyFinish();
-                sendBroadcast(new TerminatedBroadcast("fusionSlam"));//tell everyone that the fusionSlam terminated itself
-                terminate();
+            else{
+                System.out.println("the size of the message queue is: " + MessageBusImpl.getInstance().getMessageQueue().size());
+                if(MessageBusImpl.getInstance().getMessageQueue().size() <= 2)
+                {
+                    fusionSlam.setEarlyFinish();
+                    System.out.println("fusionSlam is down");
+                    sendBroadcast(new TerminatedBroadcast("fusionSlam"));//tell everyone that the camera terminated itself
+                    terminate();
+                    fusionSlam.buildOutput();
+                }
             }
         });
 

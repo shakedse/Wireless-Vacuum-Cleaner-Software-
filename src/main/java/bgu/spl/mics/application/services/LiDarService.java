@@ -36,16 +36,15 @@ public class LiDarService extends MicroService
     private final CountDownLatch latch;
     private int time;
     private LinkedList<DetectedObjectsEvent> detectedObjects;
-    private int cameraNum;//we want to know how many cameras are there in the system
 
-    public LiDarService(LiDarWorkerTracker LiDarWorkerTracker, CountDownLatch latch, int cameraNum) 
+
+    public LiDarService(LiDarWorkerTracker LiDarWorkerTracker, CountDownLatch latch) 
     {
         super("LidarWorker" + LiDarWorkerTracker.getID());
         this.myWorkerTracker = LiDarWorkerTracker;
         this.detectedObjects = new LinkedList<DetectedObjectsEvent>();
         time = 0;
         this.latch = latch;
-        this.cameraNum = cameraNum;
     }
 
     /**
@@ -57,34 +56,46 @@ public class LiDarService extends MicroService
     protected void initialize() {
         // TODO Implement this
         subscribeBroadcast(TickBroadcast.class, (TickBroadcast tick) -> {
-            int currTime = tick.getTick();
-            if (this.myWorkerTracker.getStatus() == STATUS.UP){
-            for (DetectedObjectsEvent decEvent : this.detectedObjects) 
+            time = tick.getTick();
+
+            myWorkerTracker.checkForErrors(time); // getting the current ticks event to check if the LiDar crashed
+
+            if(myWorkerTracker.getStatus() == STATUS.ERROR) //if the camera crashed - terminate
             {
-                if ((currTime >= decEvent.getdetectedTime() + myWorkerTracker.getFrequency()) && (decEvent.isRemoved()==false))
+                myWorkerTracker.statusDown();
+                sendBroadcast(new CrashedBroadcast("LiDar"+ myWorkerTracker.getID()));// send a broadcast that the LiDar crashed
+                terminate();
+            }
+
+            else if (this.myWorkerTracker.getStatus() == STATUS.UP)
+            {
+                for (DetectedObjectsEvent decEvent : this.detectedObjects) 
                 {
-                    // going over the detected objects at time currTime
-                        TrackedObjectsEvent currEvent = myWorkerTracker.convertDetectedToTracked(decEvent);
-                        if (currEvent.getTrackedObjectsList().get(0).getDescription().equals("ERROR"))// if the detected object id is ERROR
-                        {
-                            sendBroadcast(new CrashedBroadcast("LiDar"+ myWorkerTracker.getID()));// send a broadcast that the LiDar crashed
-                            terminate();
-                        }
-                        else
-                        {
-                            decEvent.remove();
-                            sendEvent(currEvent);
-                        }
-                    }
-                    if(this.myWorkerTracker.getStatus() == STATUS.DOWN)
+                    if ((time >= decEvent.getdetectedTime() - myWorkerTracker.getFrequency()) && (decEvent.isRemoved()==false))
                     {
-                        sendBroadcast(new TerminatedBroadcast("LiDar"+ myWorkerTracker.getID()));// send a broadcast that the LiDar terminate itself
-                        terminate();
+                        // going over the detected objects at time currTime
+                        TrackedObjectsEvent currEvent = myWorkerTracker.convertDetectedToTracked(decEvent);
+                        decEvent.remove();
+                        sendEvent(currEvent);
                     }
                     MessageBusImpl.getInstance().complete(decEvent, true); 
-
                 }
-        }
+            }
+
+            int last = LiDarDataBase.getInstance().getCloudPoints().size() - 1;
+            if (LiDarDataBase.getInstance().getCloudPoints().get(last).getTime() <= time - myWorkerTracker.getFrequency())
+            {
+                myWorkerTracker.statusDown();
+                System.out.println("LiDarService is down at time:" + (tick.getTick()));
+                sendBroadcast(new TerminatedBroadcast(((Integer)myWorkerTracker.getID()).toString()));
+                terminate();
+            }
+            
+            if(this.myWorkerTracker.getStatus() == STATUS.DOWN)
+            {
+                sendBroadcast(new TerminatedBroadcast("LiDar"+ myWorkerTracker.getID()));// send a broadcast that the LiDar terminate itself
+                terminate();
+            }
         });
 
         subscribeBroadcast(TerminatedBroadcast.class, (TerminatedBroadcast terminate) -> {
@@ -94,27 +105,6 @@ public class LiDarService extends MicroService
                 this.myWorkerTracker.statusDown();
                 sendBroadcast(new TerminatedBroadcast(((Integer) myWorkerTracker.getID()).toString()));// tell everyone that the LiDar terminated itself
                 terminate();
-            }
-            else if(terminate.getTerminatedID().equals("Camera"))//if the terminated MS is camera - terminate me too
-            {
-                cameraNum--;
-                if(cameraNum==0)//if no cameras are left
-                {
-                    for(DetectedObjectsEvent d : detectedObjects)
-                    {
-                        if (d.isRemoved()==false)
-                        {
-                            break;
-                        }
-                    }
-                    isFinish = true;//all the detected objects were sent
-                }
-                if(isFinish)//no more cameras and no more detected objects so we can terminate
-                {
-                    this.myWorkerTracker.statusDown();
-                    sendBroadcast(new TerminatedBroadcast(((Integer) myWorkerTracker.getID()).toString()));// tell everyone that the LiDar terminated itself
-                    terminate();
-                }             
             }
             else if (this.myWorkerTracker.getStatus() == STATUS.DOWN)// if the LiDar status is down
             {
@@ -126,25 +116,21 @@ public class LiDarService extends MicroService
         subscribeBroadcast(CrashedBroadcast.class, (CrashedBroadcast crash) -> {
             terminate();
         });
+
         // checking if we got a detected objects event
         subscribeEvent(DetectedObjectsEvent.class, (DetectedObjectsEvent event) -> {
-            if ((myWorkerTracker.getStatus() == STATUS.UP)
-                    && (time >= event.getdetectedTime() + myWorkerTracker.getFrequency())) 
+            
+            if (time >= event.getdetectedTime() - myWorkerTracker.getFrequency()) 
             {
-                TrackedObjectsEvent toSend = myWorkerTracker.convertDetectedToTracked(event);      
-                if (((TrackedObject)toSend.getTrackedObjectsList().get(0)).getId().equals("ERROR"))// if the detected                                                           // object id is ERROR
-                {
-                    sendBroadcast(new CrashedBroadcast("LiDar"));// send a broadcast that the lidar crashed
-                    terminate();
-                } 
-                else 
-                {
-                     sendEvent(toSend);
-                }
+                System.out.println("time:" + time);
+                System.out.println("event time:" + event.getdetectedTime());
+
+                TrackedObjectsEvent toSend = myWorkerTracker.convertDetectedToTracked(event);
+                sendEvent(toSend);
             }
             else
             {
-            detectedObjects.add(event);
+                detectedObjects.add(event);
             }
         });
         latch.countDown();

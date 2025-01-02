@@ -1,6 +1,5 @@
 package bgu.spl.mics.application.objects;
 
-import java.util.LinkedList;
 
 /**
  * CloudPoint represents a specific point in a 3D space as detected by the LiDAR.

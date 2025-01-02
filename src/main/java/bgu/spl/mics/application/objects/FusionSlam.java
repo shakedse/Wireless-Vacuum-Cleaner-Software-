@@ -1,6 +1,14 @@
 package bgu.spl.mics.application.objects;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedList;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import bgu.spl.mics.application.GurionRockRunner.SystemData;
 
 /**
  * Manages the fusion of sensor data for simultaneous localization and mapping
@@ -16,14 +24,12 @@ public class FusionSlam {
     // fields:
     private LinkedList<LandMark> landMarks;
     private LinkedList<Pose> poses;
-    private LinkedList<TrackedObject> trackedObjects;
     private LinkedList<TrackedObject> waitingTrackedObjects;
     private boolean EarlyFinish;
 
     private FusionSlam() {
         landMarks = new LinkedList<LandMark>();
         poses = new LinkedList<Pose>();
-        trackedObjects = new LinkedList<TrackedObject>();
         waitingTrackedObjects = new LinkedList<TrackedObject>();
         EarlyFinish = false;
     }
@@ -57,28 +63,37 @@ public class FusionSlam {
 
     public void addNewLandMark(TrackedObject trackedObject) 
     {
-        boolean poseFound = false;
         // input - a new tracked object
         LinkedList<CloudPoint> updatedCloudPoints = new LinkedList<CloudPoint>();
         for (Pose pose : poses)// finding the cooralte pose
         {
             if (trackedObject.getTime() == pose.getTime()) // if the pose is found
             {
-                poseFound = true;
                 for (CloudPoint p : trackedObject.getCloudPoints())// updating each cloud point
                 {
                     CloudPoint newCloudPoint = localToGlobalCordinate(pose, p);
                     updatedCloudPoints.add(newCloudPoint);
                 }
             }
-            if (!poseFound) 
-            {
-                waitingTrackedObjects.add(trackedObject);// adding the object that his pose is not found yet
-            }
         }
         LandMark newLandMark = new LandMark(trackedObject.getId(), trackedObject.getDescription(), updatedCloudPoints);
         landMarks.add(newLandMark);
+        System.out.println("new Landmark added:" + newLandMark.getID());
         StatisticalFolder.getInstance().incrementNumLandmarks();// increment the number of landmarks
+    }
+
+    public void ChecksIfExist(TrackedObject trackedObject) {
+        boolean found = false;
+        for (LandMark landMark : landMarks) {
+            if (landMark.getID().equals(trackedObject.getId())) {
+                found = true;
+                break;
+            }
+        }
+        if(found)
+            updateOldLandMark(trackedObject);
+        else
+            addNewLandMark(trackedObject);
     }
 
     public void updateOldLandMark(TrackedObject trackedObject) {
@@ -87,7 +102,7 @@ public class FusionSlam {
         for (Pose pose : poses)// finding the cooralte pose
         {
             if (trackedObject.getTime() == pose.getTime()) {
-                for (CloudPoint p : trackedObject.getCloudPoints())// updating each cloud poin
+                for (CloudPoint p : trackedObject.getCloudPoints())// updating each cloud point
                 {
                     CloudPoint newCloudPoint = localToGlobalCordinate(pose, p);
                     updatedCloudPoints.add(newCloudPoint);
@@ -99,6 +114,7 @@ public class FusionSlam {
                 landMark.setAvgCloudPoint(updatedCloudPoints);
             }
         }
+
 
         /*
          * for(CloudPoint p : trackedObject.getCloudPoints()) //finding the cooralte
@@ -140,10 +156,6 @@ public class FusionSlam {
         return globalCloudPoint;
     }
 
-    public void addTrackedObject(TrackedObject trackedObject) {
-        if (!trackedObjects.contains(trackedObject))
-            trackedObjects.add(trackedObject);
-    }
 
     // get instance
     public static FusionSlam getInstance() {
@@ -159,8 +171,27 @@ public class FusionSlam {
         return poses;
     }
 
-    public LinkedList<TrackedObject> getTrackedObjects() {
-        return trackedObjects;
+
+    public void buildOutput()
+    {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        SystemData systemData = new SystemData(StatisticalFolder.getInstance().getSystemRunTime()
+                                                , StatisticalFolder.getInstance().getNumDetectedObjects()
+                                                , StatisticalFolder.getInstance().getNumTrackedObjects()
+                                                , StatisticalFolder.getInstance().getNumLandmarks()
+                                                , new HashMap<>());
+            for(LandMark landMark : getLandMarks()) {
+                System.out.println(landMark.getID());
+                systemData.addLandmark(landMark.getID(), landMark);
+            }
+            try (FileWriter writer = new FileWriter("output.json")) {
+            // Serialize Java objects to JSON file
+                gson.toJson(systemData, writer);
+            }
+    
+            catch (IOException e) {
+                e.printStackTrace();
+            }
     }
 
 }

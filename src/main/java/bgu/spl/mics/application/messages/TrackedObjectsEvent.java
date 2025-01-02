@@ -23,6 +23,10 @@ public class TrackedObjectsEvent implements Event<Boolean> {
         this.TrackedObjectsList.add(trackedObject);
     }
 
+    public int getTime() {
+        return time;
+    }
+
     public LinkedList<TrackedObject> getTrackedObjectsList() {
         return TrackedObjectsList;
     }

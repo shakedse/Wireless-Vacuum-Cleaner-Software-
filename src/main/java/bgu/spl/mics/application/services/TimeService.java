@@ -22,24 +22,14 @@ public class TimeService extends MicroService {
      */
     private int tickTime;
     private int duration;
-    private boolean Finish;
 
     public TimeService(int TickTime, int Duration) {
         super("TimeService");
         // TODO Implement this
         this.tickTime = TickTime;
         this.duration = Duration;
-        Finish = false;
     }
 
-    
-
-    public void setEarlyFinish() {
-        this.Finish = true;
-    }
-    public boolean isFinished() {
-        return this.Finish;
-    }
 
     /**
      * Initializes the TimeService.
@@ -55,23 +45,22 @@ public class TimeService extends MicroService {
             {
                 sendBroadcast(new TickBroadcast (tickNum)); 
                 tickNum++;
-                Thread.sleep(tickTime);
+                Thread.sleep(tickTime*10);
                 StatisticalFolder.getInstance().incrementSystemRunTime();
-                if (FusionSlam.getInstance().getEarlyFinish()){
-                    //האם להוציא פה את ההאוטפוט?
-                    sendBroadcast(new TerminatedBroadcast("TimeService")); 
-                    terminate();
-                    break;
-                }
+                
             }
             catch (InterruptedException e)
             {
                 Thread.currentThread().interrupt();
             }
+            if (FusionSlam.getInstance().getEarlyFinish()){
+                //האם להוציא פה את ההאוטפוט?
+                sendBroadcast(new TerminatedBroadcast("TimeService")); 
+                terminate();
+                break;
+            }
         }
-        Finish = true;
         sendBroadcast(new TerminatedBroadcast("TimeService"));
         terminate();
     }
-
 }
