@@ -1,5 +1,8 @@
 package bgu.spl.mics.application.services;
 import bgu.spl.mics.application.messages.CrashedBroadcast;
+import bgu.spl.mics.application.messages.DetectedObjectsEvent;
+import bgu.spl.mics.application.messages.LastCameraFrameEvent;
+import bgu.spl.mics.application.messages.LastLiDarFrameEvent;
 import bgu.spl.mics.application.messages.PoseEvent;
 import bgu.spl.mics.application.messages.TerminatedBroadcast;
 import bgu.spl.mics.application.messages.TickBroadcast;
@@ -104,7 +107,16 @@ public class FusionSlamService extends MicroService {
 
     //CrashedBroadcast
         subscribeBroadcast(CrashedBroadcast.class ,(CrashedBroadcast crashed) ->{
+            fusionSlam.errorOutPut(crashed);
             terminate();
+        });
+
+        subscribeEvent(LastCameraFrameEvent.class ,(LastCameraFrameEvent event) ->{
+            fusionSlam.addLastFrameCamera(event.getName(), (DetectedObjectsEvent)event.getLastFrame());
+        });
+
+        subscribeEvent(LastLiDarFrameEvent.class ,(LastLiDarFrameEvent event) ->{
+            fusionSlam.addLastFrameLidar(event.getName(), (TrackedObjectsEvent)event.getLastFrame());
         });
     }
 }

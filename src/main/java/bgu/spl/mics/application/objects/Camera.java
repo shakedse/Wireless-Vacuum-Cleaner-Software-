@@ -8,6 +8,7 @@ import java.util.Map;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import bgu.spl.mics.application.messages.DetectedObjectsEvent;
+import bgu.spl.mics.application.messages.TrackedObjectsEvent;
 
 /**
  * Represents a camera sensor on the robot.
@@ -21,6 +22,7 @@ public class Camera {
     private STATUS status;
     private LinkedList<StampedDetectedObjects> stampDetectedObjects = new LinkedList<>();
     private String camera_key;
+    private DetectedObjectsEvent lastFrame;
 
     public Camera(int id, int frequency, String camera_key) {
         this.id = id;
@@ -41,6 +43,11 @@ public class Camera {
         return status;
     }
 
+    public String getStringId()
+    {
+        return camera_key;
+    }
+
     public void statusDown() {
         this.status = STATUS.DOWN;
     }
@@ -48,6 +55,16 @@ public class Camera {
     public LinkedList<StampedDetectedObjects> getList()
     {
         return stampDetectedObjects;
+    }
+
+    public void setLastFrame(DetectedObjectsEvent lastFrame)
+    {
+        this.lastFrame = lastFrame;
+    }
+
+    public DetectedObjectsEvent gerLastFrame()
+    {
+        return lastFrame;
     }
 
     // returns the objects captured list at a certin time tick

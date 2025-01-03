@@ -122,7 +122,7 @@ public class GurionRockRunner {
         // TODO: Parse configuration file.
 
         Gson gson = new Gson();
-        try (FileReader reader = new FileReader("C:\\Users\\ron01\\.vscode\\SPL2\\SPL2\\example_input_with_error\\configuration_file.json")) 
+        try (FileReader reader = new FileReader("C:\\Users\\ron01\\.vscode\\SPL2\\SPL2\\example_input_2\\configuration_file.json")) 
         {
             // Convert JSON File to Java Object
             Type configFileType = new TypeToken<configurationFileType>(){}.getType();
@@ -130,14 +130,15 @@ public class GurionRockRunner {
 
             //giving eahc camera its data
             for(Camera camera : DataBases.getCameras().getCamerasConfigurations()) {
-                camera.buildData("C:\\Users\\ron01\\.vscode\\SPL2\\SPL2\\example_input_with_error\\" + DataBases.getCameras().getCameraDatasPath().substring(2));  
+                camera.buildData("C:\\Users\\ron01\\.vscode\\SPL2\\SPL2\\example_input_2\\" + DataBases.getCameras().getCameraDatasPath().substring(2));  
+                System.out.println(camera.getList().size() - 1);
             }
 
             // giving the LiDar its data
-            LiDarDataBase.getInstance().buildData("C:\\Users\\ron01\\.vscode\\SPL2\\SPL2\\example_input_with_error\\" + DataBases.getLiDarWorkers().getLidarsDataPath().substring(2));
+            LiDarDataBase.getInstance().buildData("C:\\Users\\ron01\\.vscode\\SPL2\\SPL2\\example_input_2\\" + DataBases.getLiDarWorkers().getLidarsDataPath().substring(2));
             
             // giving the GPSIMU its data
-            GPSIMU.getInstance().buildData("C:\\Users\\ron01\\.vscode\\SPL2\\SPL2\\example_input_with_error\\" + DataBases.getPoseJsonFile().substring(2));
+            GPSIMU.getInstance().buildData("C:\\Users\\ron01\\.vscode\\SPL2\\SPL2\\example_input_2\\" + DataBases.getPoseJsonFile().substring(2));
 
             int numberOfThreads = 0;
 

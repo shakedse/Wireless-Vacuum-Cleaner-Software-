@@ -4,6 +4,10 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import bgu.spl.mics.application.messages.DetectedObjectsEvent;
+import bgu.spl.mics.application.objects.Camera;
+import bgu.spl.mics.application.objects.LiDarWorkerTracker;
+
 /**
  * The {@link MessageBusImpl class is the implementation of the MessageBus
  * interface.
@@ -21,6 +25,9 @@ public class MessageBusImpl implements MessageBus
 	private ConcurrentHashMap<Class<? extends Broadcast>, BlockingQueue<MicroService>> broadcastSubscribers;// map for broadcasts
 	private ConcurrentHashMap<Event<?>,Future<?>> EventAndFuture;
 	int numberOfMS;
+
+	private ConcurrentHashMap<Camera, DetectedObjectsEvent> camerasLastFrames;
+    private ConcurrentHashMap<LiDarWorkerTracker, DetectedObjectsEvent> LiDarLastFrames;
 	
 	private MessageBusImpl() //A private constructor
 	{
@@ -29,6 +36,9 @@ public class MessageBusImpl implements MessageBus
         messageQueue = new ConcurrentHashMap<>();
         EventAndFuture = new ConcurrentHashMap<>();
 		numberOfMS = 0;
+
+		camerasLastFrames = new ConcurrentHashMap<>();
+        LiDarLastFrames = new ConcurrentHashMap<>();
     }
 	//getters
 	public ConcurrentHashMap<MicroService, BlockingQueue<Message>> getMessageQueue() 
@@ -108,11 +118,11 @@ public class MessageBusImpl implements MessageBus
 		{
 			if (!curr.isEmpty()) 
 			{
-				MicroService toMission = curr.poll();
-				curr.add(toMission);// handling the round robin
-				messageQueue.get(toMission).add(e);
 				Future<T> ret = new Future<T>();
 				EventAndFuture.putIfAbsent(e, ret);
+				MicroService toMission = curr.poll();
+				messageQueue.get(toMission).add(e);
+				curr.add(toMission);// handling the round robin
 				return ret;
 			}
 		}

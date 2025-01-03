@@ -20,6 +20,7 @@ public class LiDarWorkerTracker
     private int frequency;
     private STATUS status;
     private LinkedList<TrackedObject> trackedObjects = new LinkedList<TrackedObject>();
+    private TrackedObjectsEvent lastFrame;
      
     public LiDarWorkerTracker (int id, int frequency)
     {
@@ -44,6 +45,16 @@ public class LiDarWorkerTracker
     public void statusDown()   
     {
         this.status = STATUS.DOWN;
+    }
+
+    public void setLastFrame(TrackedObjectsEvent lastFrame)
+    {
+        this.lastFrame = lastFrame;
+    }
+
+    public TrackedObjectsEvent gerLastFrame()
+    {
+        return lastFrame;
     }
 
     //returns the tracked objects that has a cloudpoints list at a time

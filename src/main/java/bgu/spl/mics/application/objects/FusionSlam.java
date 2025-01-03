@@ -4,11 +4,19 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import bgu.spl.mics.application.GurionRockRunner.SystemData;
+import bgu.spl.mics.application.messages.CrashedBroadcast;
+import bgu.spl.mics.application.messages.DetectedObjectsEvent;
+import bgu.spl.mics.application.messages.TrackedObjectsEvent;
+
 
 /**
  * Manages the fusion of sensor data for simultaneous localization and mapping
@@ -27,11 +35,16 @@ public class FusionSlam {
     private LinkedList<TrackedObject> waitingTrackedObjects;
     private boolean EarlyFinish;
 
+    private ConcurrentHashMap<String, DetectedObjectsEvent> camerasLastFrames;
+    private ConcurrentHashMap<String, TrackedObjectsEvent> LiDarLastFrames;
+
     private FusionSlam() {
         landMarks = new LinkedList<LandMark>();
         poses = new LinkedList<Pose>();
         waitingTrackedObjects = new LinkedList<TrackedObject>();
         EarlyFinish = false;
+        camerasLastFrames = new ConcurrentHashMap<>();
+        LiDarLastFrames = new ConcurrentHashMap<>();
     }
 
     public void setEarlyFinish() {
@@ -59,6 +72,17 @@ public class FusionSlam {
     public void addPose(Pose pose) {
         if (!poses.contains(pose))
             poses.add(pose);
+    }
+
+
+    public void addLastFrameCamera(String Camera, DetectedObjectsEvent lastFrame)
+    {
+        camerasLastFrames.putIfAbsent(Camera, lastFrame);
+    }
+
+    public void addLastFrameLidar(String Lidar, TrackedObjectsEvent lastFrame)
+    {
+        LiDarLastFrames.putIfAbsent(Lidar, lastFrame);
     }
 
     public void addNewLandMark(TrackedObject trackedObject) 
@@ -174,24 +198,66 @@ public class FusionSlam {
 
     public void buildOutput()
     {
+        System.out.println("create output");
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         SystemData systemData = new SystemData(StatisticalFolder.getInstance().getSystemRunTime()
                                                 , StatisticalFolder.getInstance().getNumDetectedObjects()
                                                 , StatisticalFolder.getInstance().getNumTrackedObjects()
                                                 , StatisticalFolder.getInstance().getNumLandmarks()
                                                 , new HashMap<>());
-            for(LandMark landMark : getLandMarks()) {
-                System.out.println(landMark.getID());
-                systemData.addLandmark(landMark.getID(), landMark);
-            }
-            try (FileWriter writer = new FileWriter("output.json")) {
-            // Serialize Java objects to JSON file
-                gson.toJson(systemData, writer);
-            }
-    
-            catch (IOException e) {
-                e.printStackTrace();
-            }
+        for(LandMark landMark : getLandMarks()) {
+            System.out.println(landMark.getID());
+            systemData.addLandmark(landMark.getID(), landMark);
+        }
+        try (FileWriter writer = new FileWriter("output.json")) {
+        // Serialize Java objects to JSON file
+            gson.toJson(systemData, writer);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
+    public class ErrorOutput {
+
+        private String faultySensor;
+        private Map<String, DetectedObjectsEvent> lastCamerasFrame;
+        private Map<String, TrackedObjectsEvent> lastLiDarWorkerTrackersFrame;
+        private List<Pose> poses;
+        private SystemData statistics;
+    
+        // Constructor
+        public ErrorOutput(String faultySensor, Map<String, DetectedObjectsEvent> lastCamerasFrame,
+                           Map<String, TrackedObjectsEvent> lastLiDarWorkerTrackersFrame, List<Pose> poses,
+                           SystemData statistics) {
+            this.faultySensor = faultySensor;
+            this.lastCamerasFrame = lastCamerasFrame;
+            this.lastLiDarWorkerTrackersFrame = lastLiDarWorkerTrackersFrame;
+            this.poses = poses;
+            this.statistics = statistics;
+        }
+    }
+    public void errorOutPut(CrashedBroadcast crashed)
+    {
+        System.out.println("create output");
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        SystemData Stats = new SystemData(StatisticalFolder.getInstance().getSystemRunTime()
+                                        , StatisticalFolder.getInstance().getNumDetectedObjects()
+                                        , StatisticalFolder.getInstance().getNumTrackedObjects()
+                                        , StatisticalFolder.getInstance().getNumLandmarks()
+                                        , new HashMap<>());
+        for(LandMark landMark : getLandMarks()) {
+            System.out.println(landMark.getID());
+            Stats.addLandmark(landMark.getID(), landMark);
+        }
+        ErrorOutput toWrite = new ErrorOutput(crashed.getCrashedID(), camerasLastFrames, LiDarLastFrames, poses, Stats);
+        try (FileWriter writer = new FileWriter("output.json")) {
+            // Serialize Java objects to JSON file
+            gson.toJson(toWrite, writer);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }      
 
 }

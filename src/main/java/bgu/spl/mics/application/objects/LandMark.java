@@ -33,7 +33,8 @@ public class LandMark {
 
     public void setAvgCloudPoint(LinkedList<CloudPoint> newCloudPoints)
     {
-        for(int i = 0; i < newCloudPoints.size(); i++)
+        int updateSize = Math.min(cloudPointsList.size(), newCloudPoints.size());
+        for(int i = 0; i < updateSize; i++)
         {
             cloudPointsList.get(i).setX((cloudPointsList.get(i).getX() + newCloudPoints.get(i).getX())/2);
             cloudPointsList.get(i).setY((cloudPointsList.get(i).getY() + newCloudPoints.get(i).getY())/2);

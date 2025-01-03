@@ -2,6 +2,7 @@ package bgu.spl.mics.application.services;
 
 import bgu.spl.mics.application.messages.CrashedBroadcast;
 import bgu.spl.mics.application.messages.DetectedObjectsEvent;
+import bgu.spl.mics.application.messages.LastLiDarFrameEvent;
 import bgu.spl.mics.application.messages.TerminatedBroadcast;
 import bgu.spl.mics.application.messages.TickBroadcast;
 import bgu.spl.mics.application.messages.TrackedObjectsEvent;
@@ -62,6 +63,7 @@ public class LiDarService extends MicroService
 
             if(myWorkerTracker.getStatus() == STATUS.ERROR) //if the camera crashed - terminate
             {
+                sendEvent(new LastLiDarFrameEvent("LiDarWorkerTracker" + myWorkerTracker.getID(), myWorkerTracker.gerLastFrame()));
                 myWorkerTracker.statusDown();
                 sendBroadcast(new CrashedBroadcast("LiDar"+ myWorkerTracker.getID()));// send a broadcast that the LiDar crashed
                 terminate();
@@ -77,6 +79,7 @@ public class LiDarService extends MicroService
                         TrackedObjectsEvent currEvent = myWorkerTracker.convertDetectedToTracked(decEvent);
                         decEvent.remove();
                         sendEvent(currEvent);
+                        myWorkerTracker.setLastFrame(currEvent);
                     }
                     MessageBusImpl.getInstance().complete(decEvent, true); 
                 }
@@ -99,7 +102,6 @@ public class LiDarService extends MicroService
         });
 
         subscribeBroadcast(TerminatedBroadcast.class, (TerminatedBroadcast terminate) -> {
-            boolean isFinish = false;
             if (terminate.getTerminatedID().equals("TimeService"))// if the terminated MS is timeService
             {
                 this.myWorkerTracker.statusDown();
@@ -122,11 +124,9 @@ public class LiDarService extends MicroService
             
             if (time >= event.getdetectedTime() - myWorkerTracker.getFrequency()) 
             {
-                System.out.println("time:" + time);
-                System.out.println("event time:" + event.getdetectedTime());
-
                 TrackedObjectsEvent toSend = myWorkerTracker.convertDetectedToTracked(event);
                 sendEvent(toSend);
+                myWorkerTracker.setLastFrame(toSend);
             }
             else
             {
