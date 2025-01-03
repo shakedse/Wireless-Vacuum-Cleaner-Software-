@@ -1,19 +1,106 @@
-{"systemRuntime":22,"numDetectedObjects":13,
-"numTrackedObjects":13,"numLandmarks":7,
-"landMarks":{
-    "Wall_4":{"id":"Wall_4","description":"Wall","coordinates":
-    [{"x":1.1887387639977982,"y":5.046603301251042},{"x":1.2533775541582042,"y":5.113604111414717}]},
-    "Wall_3":{"id":"Wall_3","description":"Wall","coordinates":
-    [{"x":-2.6882128166564954,"y":5.78546831239456},{"x":-2.8529412210562732,"y":5.763747954999182}]},
-    "Circular_Base_1":{"id":"Circular_Base_1","description":"Circular Base","coordinates":
-    [{"x":3.2468144035674857,"y":5.632104996726555},{"x":3.2171102246841246,"y":5.904919229214624}]},
-    "Wall_1":{"id":"Wall_1","description":"Wall","coordinates":
-    [{"x":-1.2604382314267957,"y":3.124125914456589},{"x":-1.303865731725388,"y":2.9438188258406823}]},
-    "Door":{"id":"Door","description":"Door","coordinates":
-    [{"x":-2.913332578606659,"y":-1.1554635639732926},{"x":-2.7427859966862367,"y":-1.4731329886827864}]},
-    "Chair_Base_1":{"id":"Chair_Base_1","description":"Chair Base","coordinates":
-    [{"x":0.037252720247020754,"y":6.086392198939979},{"x":0.16704577698634138,"y":5.7502052241458035}]},
-    "Wall_5":{"id":"Wall_5","description":"Wall","coordinates":
-    [{"x":0.8142376183545279,"y":1.7138954090461358},{"x":0.8500729658054942,"y":1.6842067124155156}]}
+{
+  "systemRuntime": 20,
+  "numDetectedObjects": 13,
+  "numTrackedObjects": 12,
+  "numLandmarks": 7,
+  "landMarks": {
+    "Wall_4": {
+      "id": "Wall_4",
+      "description": "Wall",
+      "cloudPointsList": [
+        {
+          "x": 1.1887383460998535,
+          "y": 5.046603620052338
+        },
+        {
+          "x": 1.2533771991729736,
+          "y": 5.113604038953781
+        }
+      ]
+    },
+    "Wall_3": {
+      "id": "Wall_3",
+      "description": "Wall",
+      "cloudPointsList": [
+        {
+          "x": -2.688212752342224,
+          "y": 5.7854684591293335
+        },
+        {
+          "x": -2.8529412746429443,
+          "y": 5.763747930526733
+        }
+      ]
+    },
+    "Circular_Base_1": {
+      "id": "Circular_Base_1",
+      "description": "Circular Base",
+      "cloudPointsList": [
+        {
+          "x": -3.0700931549072266,
+          "y": 1.7225611209869385
+        },
+        {
+          "x": -3.2658066749572754,
+          "y": 1.8664172887802124
+        }
+      ]
+    },
+    "Wall_1": {
+      "id": "Wall_1",
+      "description": "Wall",
+      "cloudPointsList": [
+        {
+          "x": -1.2604384422302246,
+          "y": 3.1241257041692734
+        },
+        {
+          "x": -1.303865909576416,
+          "y": 2.943818621337414
+        }
+      ]
+    },
+    "Chair_Base_1": {
+      "id": "Chair_Base_1",
+      "description": "Chair Base",
+      "cloudPointsList": [
+        {
+          "x": 0.03725242614746094,
+          "y": 6.086391806602478
+        },
+        {
+          "x": 0.16704559326171875,
+          "y": 5.750204920768738
+        }
+      ]
+    },
+    "Door": {
+      "id": "Door",
+      "description": "Door",
+      "cloudPointsList": [
+        {
+          "x": -2.913332462310791,
+          "y": -1.155463457107544
+        },
+        {
+          "x": -2.742785930633545,
+          "y": -1.4731329679489136
+        }
+      ]
+    },
+    "Wall_5": {
+      "id": "Wall_5",
+      "description": "Wall",
+      "cloudPointsList": [
+        {
+          "x": 0.8142375946044922,
+          "y": 1.7138953655958176
+        },
+        {
+          "x": 0.8500728607177734,
+          "y": 1.6842066049575806
+        }
+      ]
     }
+  }
 }

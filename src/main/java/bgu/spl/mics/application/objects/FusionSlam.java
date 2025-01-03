@@ -102,7 +102,6 @@ public class FusionSlam {
         }
         LandMark newLandMark = new LandMark(trackedObject.getId(), trackedObject.getDescription(), updatedCloudPoints);
         landMarks.add(newLandMark);
-        System.out.println("new Landmark added:" + newLandMark.getID());
         StatisticalFolder.getInstance().incrementNumLandmarks();// increment the number of landmarks
     }
 
@@ -138,25 +137,6 @@ public class FusionSlam {
                 landMark.setAvgCloudPoint(updatedCloudPoints);
             }
         }
-
-
-        /*
-         * for(CloudPoint p : trackedObject.getCloudPoints()) //finding the cooralte
-         * pose
-         * {
-         * double x = (p.getX() + cloudPoint.getX())/2;
-         * double y = (p.getY() + cloudPoint.getY())/2;
-         * CloudPoint newCloudPoint = new CloudPoint(x, y);
-         * updatedCloudPoints.add(newCloudPoint);
-         * }
-         * LandMark remove =
-         * landMarks.get(landMarks.indexOf((Object)trackedObject.getId()));//האם
-         * הקאסטינג סבבה פה?
-         * landMarks.remove(remove); //remove the old object
-         * LandMark newLandMark = new LandMark(trackedObject.getId(),
-         * trackedObject.getDescription(), updatedCloudPoints);
-         * landMarks.add(newLandMark); //add the updated object
-         */
     }
 
     // converts the local coordinate of a cloud point to the global coordinate
@@ -206,7 +186,6 @@ public class FusionSlam {
                                                 , StatisticalFolder.getInstance().getNumLandmarks()
                                                 , new HashMap<>());
         for(LandMark landMark : getLandMarks()) {
-            System.out.println(landMark.getID());
             systemData.addLandmark(landMark.getID(), landMark);
         }
         try (FileWriter writer = new FileWriter("output.json")) {
@@ -247,7 +226,6 @@ public class FusionSlam {
                                         , StatisticalFolder.getInstance().getNumLandmarks()
                                         , new HashMap<>());
         for(LandMark landMark : getLandMarks()) {
-            System.out.println(landMark.getID());
             Stats.addLandmark(landMark.getID(), landMark);
         }
         ErrorOutput toWrite = new ErrorOutput(crashed.getCrashedID(), camerasLastFrames, LiDarLastFrames, poses, Stats);

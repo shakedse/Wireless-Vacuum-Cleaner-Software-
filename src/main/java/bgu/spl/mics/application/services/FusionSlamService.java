@@ -107,6 +107,7 @@ public class FusionSlamService extends MicroService {
 
     //CrashedBroadcast
         subscribeBroadcast(CrashedBroadcast.class ,(CrashedBroadcast crashed) ->{
+            fusionSlam.setEarlyFinish();
             fusionSlam.errorOutPut(crashed);
             terminate();
         });

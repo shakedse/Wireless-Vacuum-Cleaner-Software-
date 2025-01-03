@@ -40,7 +40,6 @@ public class PoseService extends MicroService {
             sendEvent(new PoseEvent(myPose.getPoseAtTick(tick.getTick())));// creating an event at a certin tick
             if(GPSIMU.getInstance().getStatus() == STATUS.DOWN)
             {
-                System.out.println("PoseService is down at time:" + (tick.getTick()));
                 sendBroadcast(new TerminatedBroadcast("PoseService"));
                 terminate();
             }
@@ -50,7 +49,7 @@ public class PoseService extends MicroService {
             if (terminate.getTerminatedID().equals("TimeService"))// if the terminated MS is timeService
             {
                 this.myPose.statusDown();// set the status of the pose to down
-                sendBroadcast(new TerminatedBroadcast("PoseService"));// tell everyone tha
+                sendBroadcast(new TerminatedBroadcast("PoseService"));// tell everyone that
                 terminate();
             }
         });

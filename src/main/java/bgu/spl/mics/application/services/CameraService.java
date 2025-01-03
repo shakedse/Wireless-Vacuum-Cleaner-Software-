@@ -61,7 +61,7 @@ public class CameraService extends MicroService
             else
             {
                 DetectedObjectsEvent event = camera.activateTick(time - camera.getFrequency()); //returns the events of the detected objects at the tick
-                if(event != null)
+                if(event != null && event.getDetectedObjects().size() > 0) //if there are detected objects
                 {  
                     sendEvent(event); 
                     camera.setLastFrame(event);

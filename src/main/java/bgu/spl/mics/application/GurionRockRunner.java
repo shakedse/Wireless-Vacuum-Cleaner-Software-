@@ -131,7 +131,7 @@ public class GurionRockRunner {
 
         // reading the configuration file
         Gson gson = new Gson();
-        try (FileReader reader = new FileReader(configFilePath + "\\configuration_file.json")) 
+        try (FileReader reader = new FileReader(configFilePath)) 
         {
             // Convert JSON File to Java Object
             Type configFileType = new TypeToken<configurationFileType>(){}.getType();
@@ -139,14 +139,14 @@ public class GurionRockRunner {
 
             //giving each camera its data
             for(Camera camera : DataBases.getCameras().getCamerasConfigurations()) {
-                camera.buildData(configFilePath + DataBases.getCameras().getCameraDatasPath());  
+                camera.buildData(DataBases.getCameras().getCameraDatasPath());  
             }
 
             // giving the LiDar its data
-            LiDarDataBase.getInstance().buildData(configFilePath + DataBases.getLiDarWorkers().getLidarsDataPath());
+            LiDarDataBase.getInstance().buildData(DataBases.getLiDarWorkers().getLidarsDataPath());
             
             // giving the GPSIMU its data
-            GPSIMU.getInstance().buildData(configFilePath + DataBases.getPoseJsonFile());
+            GPSIMU.getInstance().buildData(DataBases.getPoseJsonFile());
 
             int numberOfThreads = 0;
 
