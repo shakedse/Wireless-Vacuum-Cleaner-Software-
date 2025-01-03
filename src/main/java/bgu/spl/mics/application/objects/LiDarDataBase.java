@@ -48,17 +48,4 @@ public class LiDarDataBase
     {
         return cloudPoints;
     }
-
-    public static void main(String[] args)
-    {
-        LiDarDataBase dataBase = LiDarDataBase.getInstance();
-        for (int i = 0; i < 3 ; i++) {
-            System.out.print(dataBase.getCloudPoints().get(i).getID());
-            System.out.print("     ");
-            System.out.print(dataBase.getCloudPoints().get(i).getTime());
-            System.out.print("     "); // not getting the right time!!!
-            System.out.print(dataBase.getCloudPoints().get(i).getCloudPoints().toString());
-            System.out.println("     ");
-        }
-    }
 }

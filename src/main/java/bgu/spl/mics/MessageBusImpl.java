@@ -24,7 +24,6 @@ public class MessageBusImpl implements MessageBus
 	private ConcurrentHashMap<Class<? extends Event<?>>, BlockingQueue<MicroService>> eventSubscribers;// map for event subscribers
 	private ConcurrentHashMap<Class<? extends Broadcast>, BlockingQueue<MicroService>> broadcastSubscribers;// map for broadcasts
 	private ConcurrentHashMap<Event<?>,Future<?>> EventAndFuture;
-	int numberOfMS;
 
 	private ConcurrentHashMap<Camera, DetectedObjectsEvent> camerasLastFrames;
     private ConcurrentHashMap<LiDarWorkerTracker, DetectedObjectsEvent> LiDarLastFrames;
@@ -35,7 +34,6 @@ public class MessageBusImpl implements MessageBus
 		broadcastSubscribers = new ConcurrentHashMap<>();
         messageQueue = new ConcurrentHashMap<>();
         EventAndFuture = new ConcurrentHashMap<>();
-		numberOfMS = 0;
 
 		camerasLastFrames = new ConcurrentHashMap<>();
         LiDarLastFrames = new ConcurrentHashMap<>();
@@ -59,7 +57,7 @@ public class MessageBusImpl implements MessageBus
 	}
 	public int getNumberOfMS() 
 	{
-		return numberOfMS;
+		return messageQueue.size();
 	}
 	
 	//A method so that we can reach the private methods
@@ -134,7 +132,6 @@ public class MessageBusImpl implements MessageBus
 	// a new microservice registers to a new queue
 	{
 		messageQueue.putIfAbsent(m, new LinkedBlockingQueue<Message>());
-		numberOfMS++;
 	}
 
 	@Override
@@ -165,7 +162,6 @@ public class MessageBusImpl implements MessageBus
 				broadcastSubscribers.values().forEach(queue -> queue.remove(m));
 			}
 		}
-		numberOfMS--;
 	}
 
 	@Override

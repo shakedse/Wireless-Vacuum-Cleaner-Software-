@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Debug GurionRockRunner",
+            "request": "launch",
+            "mainClass": "bgu.spl.mics.application.GurionRockRunner",
+            "projectName": "spl225ass2",
+            "args": [], // Pass the path as an argument
+            "vmArgs": "",
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "mvn package",
+            "console": "integratedTerminal"
+        }
+    ]
+}

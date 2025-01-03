@@ -121,40 +121,46 @@ public class GurionRockRunner {
     {        
         // TODO: Parse configuration file.
 
+        if (args.length == 0) {
+            System.err.println("Please provide the path to the configuration file as a command-line argument.");
+            return;
+        }
+    
+        // getting the path to the configuration file
+        String configFilePath = args[0];
+
+        // reading the configuration file
         Gson gson = new Gson();
-        try (FileReader reader = new FileReader("C:\\Users\\ron01\\.vscode\\SPL2\\SPL2\\example_input_2\\configuration_file.json")) 
+        try (FileReader reader = new FileReader(configFilePath + "\\configuration_file.json")) 
         {
             // Convert JSON File to Java Object
             Type configFileType = new TypeToken<configurationFileType>(){}.getType();
             configurationFileType DataBases = gson.fromJson(reader, configFileType);
 
-            //giving eahc camera its data
+            //giving each camera its data
             for(Camera camera : DataBases.getCameras().getCamerasConfigurations()) {
-                camera.buildData("C:\\Users\\ron01\\.vscode\\SPL2\\SPL2\\example_input_2\\" + DataBases.getCameras().getCameraDatasPath().substring(2));  
-                System.out.println(camera.getList().size() - 1);
+                camera.buildData(configFilePath + DataBases.getCameras().getCameraDatasPath());  
             }
 
             // giving the LiDar its data
-            LiDarDataBase.getInstance().buildData("C:\\Users\\ron01\\.vscode\\SPL2\\SPL2\\example_input_2\\" + DataBases.getLiDarWorkers().getLidarsDataPath().substring(2));
+            LiDarDataBase.getInstance().buildData(configFilePath + DataBases.getLiDarWorkers().getLidarsDataPath());
             
             // giving the GPSIMU its data
-            GPSIMU.getInstance().buildData("C:\\Users\\ron01\\.vscode\\SPL2\\SPL2\\example_input_2\\" + DataBases.getPoseJsonFile().substring(2));
+            GPSIMU.getInstance().buildData(configFilePath + DataBases.getPoseJsonFile());
 
             int numberOfThreads = 0;
 
-            Thread FusionSlamThread = new Thread(new FusionSlamService(FusionSlam.getInstance(), new CountDownLatch(1)));
-            FusionSlamThread.start();
-            numberOfThreads++;
+            // making sure the data is built before starting the threads
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
+            // starting the threads
             Thread posethThread = new Thread(new PoseService(GPSIMU.getInstance()));
             posethThread.start();
             numberOfThreads++;
-
-            for(Camera camera : DataBases.getCameras().getCamerasConfigurations()) {
-                Thread cameraThread = new Thread(new CameraService(camera, new CountDownLatch(1)));
-                cameraThread.start();
-                numberOfThreads++;
-            }
 
             for(LiDarWorkerTracker LiDarWorker : DataBases.getLiDarWorkers().getLidarConfigurations()) {
                 Thread LiDarWorkerThread = new Thread(new LiDarService(LiDarWorker, new CountDownLatch(1)));
@@ -162,12 +168,22 @@ public class GurionRockRunner {
                 numberOfThreads++;
             }
 
+            Thread FusionSlamThread = new Thread(new FusionSlamService(FusionSlam.getInstance(), new CountDownLatch(1)));
+            FusionSlamThread.start();
+            numberOfThreads++;
 
+            for(Camera camera : DataBases.getCameras().getCamerasConfigurations()) {
+                Thread cameraThread = new Thread(new CameraService(camera, new CountDownLatch(1)));
+                cameraThread.start();
+                numberOfThreads++;
+            }
+            
+            // making sure all the threads started before starting the time service
             while(numberOfThreads > MessageBusImpl.getInstance().getNumberOfMS()) {
                 try 
                 {
-                    Thread.sleep(6);
-                    System.out.println("Waiting for all threads to start");
+                    Thread.sleep(5);
+                    System.out.println("Waiting for all threads to start, started: " + MessageBusImpl.getInstance().getNumberOfMS() + " out of " + numberOfThreads);
                 } 
                 catch (InterruptedException e) 
                 {
@@ -178,10 +194,6 @@ public class GurionRockRunner {
             TimeService timeService = new TimeService(DataBases.getTickTime(), DataBases.getDuration());
             Thread timeServiceThread = new Thread(timeService);
             timeServiceThread.start();
-
-            // TODO: Initialize system components and services.
-            // TODO: Start the simulation.
-            
         } 
         catch (IOException e) {
             e.printStackTrace();

@@ -93,12 +93,6 @@ public class LiDarService extends MicroService
                 sendBroadcast(new TerminatedBroadcast(((Integer)myWorkerTracker.getID()).toString()));
                 terminate();
             }
-            
-            if(this.myWorkerTracker.getStatus() == STATUS.DOWN)
-            {
-                sendBroadcast(new TerminatedBroadcast("LiDar"+ myWorkerTracker.getID()));// send a broadcast that the LiDar terminate itself
-                terminate();
-            }
         });
 
         subscribeBroadcast(TerminatedBroadcast.class, (TerminatedBroadcast terminate) -> {

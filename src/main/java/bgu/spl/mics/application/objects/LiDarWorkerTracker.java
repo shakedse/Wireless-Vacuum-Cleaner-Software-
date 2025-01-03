@@ -66,7 +66,7 @@ public class LiDarWorkerTracker
             LinkedList<CloudPoint> cloudPoints = new LinkedList<CloudPoint>();
             for(int i=0; i<point.getCloudPoints().size();i++) // for each cloud point in the list
             {
-                cloudPoints.add(new CloudPoint (point.getCloudPoints().get(i).get(0),point.getCloudPoints().get(i).get(1)));
+                cloudPoints.add(new CloudPoint(point.getCloudPoints().get(i).get(0),point.getCloudPoints().get(i).get(1)));
             }
             if(point.getID().equals(detectedObject.getID())) // if the deteced object exists in the LiDarDataBase 
                {

@@ -45,9 +45,8 @@ public class TimeService extends MicroService {
             {
                 sendBroadcast(new TickBroadcast (tickNum)); 
                 tickNum++;
-                Thread.sleep(tickTime*10);
+                Thread.sleep(tickTime*1);
                 StatisticalFolder.getInstance().incrementSystemRunTime();
-                
             }
             catch (InterruptedException e)
             {
