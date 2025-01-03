@@ -30,7 +30,13 @@ public class Camera {
         this.status = STATUS.UP;
         this.camera_key = camera_key;
     }
-
+    public Camera(int id, int frequency, String camera_key,  LinkedList<StampedDetectedObjects> stampDetectedObjects) {
+        this.id = id;
+        this.frequency = frequency;
+        this.status = STATUS.UP;
+        this.camera_key = camera_key;
+        this.stampDetectedObjects = stampDetectedObjects;
+    }
     public int getFrequency() {
         return frequency;
     }

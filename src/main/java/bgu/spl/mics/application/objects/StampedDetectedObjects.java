@@ -16,8 +16,8 @@ public class StampedDetectedObjects
     
     public StampedDetectedObjects (int time, LinkedList<DetectedObject> detectedObjects)
     {
-        this.time=time; // ????
-        this.detectedObjects = detectedObjects;//?????
+        this.time=time; 
+        this.detectedObjects = detectedObjects;
     }
 
     public int getTime()
