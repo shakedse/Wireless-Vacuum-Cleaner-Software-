@@ -45,14 +45,14 @@ public class TimeService extends MicroService {
             {
                 sendBroadcast(new TickBroadcast (tickNum)); 
                 tickNum++;
-                Thread.sleep(tickTime*10);
+                Thread.sleep(tickTime*1000);
                 StatisticalFolder.getInstance().incrementSystemRunTime();
             }
             catch (InterruptedException e)
             {
                 Thread.currentThread().interrupt();
             }
-            if (FusionSlam.getInstance().getEarlyFinish()){
+            if (StatisticalFolder.getInstance().getEarlyFinish()){
                 //האם להוציא פה את ההאוטפוט?
                 sendBroadcast(new TerminatedBroadcast("TimeService")); 
                 terminate();

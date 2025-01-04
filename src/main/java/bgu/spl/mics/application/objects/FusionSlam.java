@@ -7,7 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -33,27 +32,15 @@ public class FusionSlam {
     private LinkedList<LandMark> landMarks;
     private LinkedList<Pose> poses;
     private LinkedList<TrackedObject> waitingTrackedObjects;
-    private boolean EarlyFinish;
 
-    private ConcurrentHashMap<String, DetectedObjectsEvent> camerasLastFrames;
-    private ConcurrentHashMap<String, TrackedObjectsEvent> LiDarLastFrames;
-
+    
     private FusionSlam() {
         landMarks = new LinkedList<LandMark>();
         poses = new LinkedList<Pose>();
         waitingTrackedObjects = new LinkedList<TrackedObject>();
-        EarlyFinish = false;
-        camerasLastFrames = new ConcurrentHashMap<>();
-        LiDarLastFrames = new ConcurrentHashMap<>();
+
     }
 
-    public void setEarlyFinish() {
-        this.EarlyFinish = true;
-    }
-
-    public boolean getEarlyFinish() {
-        return this.EarlyFinish;
-    }
     public LinkedList<TrackedObject> getWaitingObjects() {
         return waitingTrackedObjects;
     }
@@ -75,16 +62,7 @@ public class FusionSlam {
     }
 
 
-    public void addLastFrameCamera(String Camera, DetectedObjectsEvent lastFrame)
-    {
-        camerasLastFrames.putIfAbsent(Camera, lastFrame);
-    }
-
-    public void addLastFrameLidar(String Lidar, TrackedObjectsEvent lastFrame)
-    {
-        System.out.println(lastFrame.getTrackedObjectsList().getFirst().getId());
-        LiDarLastFrames.putIfAbsent(Lidar, lastFrame);
-    }
+    
 
     public void addNewLandMark(TrackedObject trackedObject) 
     {
@@ -202,13 +180,13 @@ public class FusionSlam {
 
         private String faultySensor;
         private Map<String, DetectedObjectsEvent> lastCamerasFrame;
-        private Map<String, TrackedObjectsEvent> lastLiDarWorkerTrackersFrame;
+        private Map<Integer, TrackedObjectsEvent> lastLiDarWorkerTrackersFrame;
         private List<Pose> poses;
         private SystemData statistics;
     
         // Constructor
         public ErrorOutput(String faultySensor, Map<String, DetectedObjectsEvent> lastCamerasFrame,
-                           Map<String, TrackedObjectsEvent> lastLiDarWorkerTrackersFrame, List<Pose> poses,
+                           Map<Integer, TrackedObjectsEvent> lastLiDarWorkerTrackersFrame, List<Pose> poses,
                            SystemData statistics) {
             this.faultySensor = faultySensor;
             this.lastCamerasFrame = lastCamerasFrame;
@@ -230,7 +208,7 @@ public class FusionSlam {
         for(LandMark landMark : getLandMarks()) {
             Stats.addLandmark(landMark.getID(), landMark);
         }
-        ErrorOutput toWrite = new ErrorOutput(crashed.getCrashedID(), camerasLastFrames, LiDarLastFrames, poses, Stats);
+        ErrorOutput toWrite = new ErrorOutput(crashed.getCrashedID(), StatisticalFolder.getInstance().getCamerasLastFrames(), StatisticalFolder.getInstance().getLiDarLastFrames(), poses, Stats);
         try (FileWriter writer = new FileWriter("output.json")) {
             // Serialize Java objects to JSON file
             gson.toJson(toWrite, writer);

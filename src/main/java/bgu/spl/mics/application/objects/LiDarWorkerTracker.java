@@ -1,7 +1,6 @@
 package bgu.spl.mics.application.objects;
 
 import java.util.LinkedList;
-import java.util.List;
 
 import bgu.spl.mics.application.messages.DetectedObjectsEvent;
 import bgu.spl.mics.application.messages.TrackedObjectsEvent;
@@ -49,7 +48,7 @@ public class LiDarWorkerTracker
 
     public void setLastFrame(TrackedObjectsEvent lastFrame)
     {
-        System.out.println("LiDarWorkerTracker: " + lastFrame.getTrackedObjectsList().getFirst().getId());
+        StatisticalFolder.getInstance().addLastFrameLidar(this.id, lastFrame);
         this.lastFrame = lastFrame;
     }
 
