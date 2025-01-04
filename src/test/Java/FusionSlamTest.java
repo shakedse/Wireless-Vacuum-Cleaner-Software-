@@ -1,27 +1,8 @@
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.Test;
 
 import java.util.LinkedList;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.LinkedBlockingQueue;
-import javax.sql.StatementEvent;
-import bgu.spl.mics.Broadcast;
-import bgu.spl.mics.Event;
-import bgu.spl.mics.Message;
-import bgu.spl.mics.MessageBusImpl;
-import bgu.spl.mics.MicroService;
-import bgu.spl.mics.application.messages.DetectedObjectsEvent;
-import bgu.spl.mics.application.messages.TerminatedBroadcast;
-import bgu.spl.mics.application.messages.TickBroadcast;
-import bgu.spl.mics.application.objects.Camera;
 import bgu.spl.mics.application.objects.*;
-import bgu.spl.mics.application.objects.DetectedObject;
-import bgu.spl.mics.application.objects.StampedDetectedObjects;
-import bgu.spl.mics.application.services.*;
+
 
 /*
  * 
@@ -103,7 +84,80 @@ import bgu.spl.mics.application.services.*;
  */
 
 
+
+ import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.LinkedList;
+
 public class FusionSlamTest {
+
     // we have 2 functions:
-    // addNewLandMark which adds    
+    // addNewLandMark which adds the landsMarks from the TrackedObjects
+    // this method is using the localToGlobalCordinate to convert th tracked objects cloud points to global coordinate
+
+    private FusionSlam fusionSlam;
+
+    @BeforeEach
+    public void setUp() {
+        fusionSlam = FusionSlam.getInstance();
+    }
+
+    @Test
+    public void testAddNewLandMark() {
+        // Arrange
+        LinkedList<CloudPoint> chairCoordinates = new LinkedList<CloudPoint>();
+        CloudPoint firstCloudPoint = new CloudPoint(1.0,2.0);
+        CloudPoint secondCloudPoint = new CloudPoint(1.1,2.1);
+        chairCoordinates.add(firstCloudPoint);
+        chairCoordinates.add(secondCloudPoint);
+        TrackedObject trackedObject = new TrackedObject("chair", 1, "Test Object: chair", chairCoordinates);
+        Pose pose = new Pose(1, 4, 2, 1);
+        fusionSlam.addPose(pose);
+
+        // Act
+        fusionSlam.addNewLandMark(trackedObject);
+
+        // Assert
+        assertEquals(1, fusionSlam.getLandMarks().size(), "Expected one landmark to be added.");
+        LandMark addedLandmark = fusionSlam.getLandMarks().get(0);
+        assertEquals(trackedObject.getId(), addedLandmark.getID());
+        assertEquals(trackedObject.getDescription(), addedLandmark.getDescription());
+    }
+
+    @Test
+    public void testChecksIfExistUpdatesExistingLandmark() {
+        // Arrange
+        LinkedList<CloudPoint> chairCoordinates = new LinkedList<CloudPoint>();
+        CloudPoint firstCloudPoint = new CloudPoint(2.0,3.0);
+        CloudPoint secondCloudPoint = new CloudPoint(2.2,4.2);
+        chairCoordinates.add(firstCloudPoint);
+        chairCoordinates.add(secondCloudPoint);
+        TrackedObject trackedObjectChair = new TrackedObject("chair", 2, "Test Object: chair", chairCoordinates);
+
+        LinkedList<CloudPoint> doorCoordinates = new LinkedList<CloudPoint>();
+        CloudPoint thirdCloudPoint = new CloudPoint(5.0,2.0);
+        CloudPoint forthCloudPoint = new CloudPoint(6.0,3.8);
+        chairCoordinates.add(thirdCloudPoint);
+        chairCoordinates.add(forthCloudPoint);
+        TrackedObject trackedObjectDoor = new TrackedObject("door", 2, "Test Object: door", doorCoordinates);
+
+        Pose pose = new Pose(0, 5, 3, 2);
+        fusionSlam.addPose(pose);
+
+        // Act
+        fusionSlam.ChecksIfExist(trackedObjectChair); // should only update the cordinates
+        fusionSlam.ChecksIfExist(trackedObjectDoor); // should add new LandMark
+
+        // Assert
+        assertEquals(2, fusionSlam.getLandMarks().size(), "Expected one add new landmarks, not two.");
+        LandMark addedLandmark = fusionSlam.getLandMarks().get(0);
+        assertEquals(trackedObjectChair.getId(), addedLandmark.getID());
+        assertEquals(trackedObjectChair.getDescription(), addedLandmark.getDescription());
+
+        addedLandmark = fusionSlam.getLandMarks().get(1);
+        assertEquals(trackedObjectDoor.getId(), addedLandmark.getID());
+        assertEquals(trackedObjectDoor.getDescription(), addedLandmark.getDescription());
+    }
 }

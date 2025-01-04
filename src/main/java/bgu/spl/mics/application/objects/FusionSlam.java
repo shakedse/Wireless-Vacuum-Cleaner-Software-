@@ -79,6 +79,7 @@ public class FusionSlam {
                 }
             }
         }
+        System.out.println("new LandMark; id:" + trackedObject.getId() + "des: " + trackedObject.getDescription());
         LandMark newLandMark = new LandMark(trackedObject.getId(), trackedObject.getDescription(), updatedCloudPoints);
         landMarks.add(newLandMark);
         StatisticalFolder.getInstance().incrementNumLandmarks();// increment the number of landmarks
@@ -88,14 +89,23 @@ public class FusionSlam {
         boolean found = false;
         for (LandMark landMark : landMarks) {
             if (landMark.getID().equals(trackedObject.getId())) {
+                System.out.println("LandMark: " + landMark.getID());
+                System.out.println("tracked: " + trackedObject.getId());
                 found = true;
                 break;
             }
         }
         if(found)
+        {
+            System.out.println("update");
             updateOldLandMark(trackedObject);
+        }
+            
         else
+        {
+            System.out.println("new");
             addNewLandMark(trackedObject);
+        }
     }
 
     public void updateOldLandMark(TrackedObject trackedObject) {
@@ -111,6 +121,7 @@ public class FusionSlam {
                 }
             }
         }
+
         for (LandMark landMark : landMarks) {
             if (landMark.getID().equals(trackedObject.getId())) {
                 landMark.setAvgCloudPoint(updatedCloudPoints);

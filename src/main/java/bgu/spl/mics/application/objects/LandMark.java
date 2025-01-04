@@ -31,6 +31,11 @@ public class LandMark {
         return id;
     }
 
+    public String getDescription()
+    {
+        return description;
+    }
+
     public void setAvgCloudPoint(LinkedList<CloudPoint> newCloudPoints)
     {
         int updateSize = Math.min(cloudPointsList.size(), newCloudPoints.size());
@@ -41,5 +46,4 @@ public class LandMark {
         }
         
     }
-
 }
