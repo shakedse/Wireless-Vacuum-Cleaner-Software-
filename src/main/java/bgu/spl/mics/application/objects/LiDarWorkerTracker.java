@@ -49,10 +49,11 @@ public class LiDarWorkerTracker
 
     public void setLastFrame(TrackedObjectsEvent lastFrame)
     {
+        System.out.println("LiDarWorkerTracker: " + lastFrame.getTrackedObjectsList().getFirst().getId());
         this.lastFrame = lastFrame;
     }
 
-    public TrackedObjectsEvent gerLastFrame()
+    public TrackedObjectsEvent getLastFrame()
     {
         return lastFrame;
     }

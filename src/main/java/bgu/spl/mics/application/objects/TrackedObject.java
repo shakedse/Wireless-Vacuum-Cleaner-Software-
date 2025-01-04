@@ -25,21 +25,21 @@ public class TrackedObject
         this.cloudPoints = cloudPoints;
     }
    // Getters
-   public String getId() {
-    return id;
-}
+    public String getId() {
+        return id;
+    }
 
-public int getTime() {
-    return Time;
-}
+    public int getTime() {
+        return Time;
+    }
 
-public String getDescription() {
-    return this.description;
-}
+    public String getDescription() {
+        return this.description;
+    }
 
-public LinkedList<CloudPoint> getCloudPoints() {
-    return cloudPoints;
-}
+    public LinkedList<CloudPoint> getCloudPoints() {
+        return cloudPoints;
+    }
 }
 
 

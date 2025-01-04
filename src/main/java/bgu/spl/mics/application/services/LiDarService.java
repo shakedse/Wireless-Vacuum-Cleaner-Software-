@@ -63,7 +63,8 @@ public class LiDarService extends MicroService
 
             if(myWorkerTracker.getStatus() == STATUS.ERROR) //if the camera crashed - terminate
             {
-                sendEvent(new LastLiDarFrameEvent("LiDarWorkerTracker" + myWorkerTracker.getID(), myWorkerTracker.gerLastFrame()));
+                sendEvent(new LastLiDarFrameEvent("LiDarWorkerTracker" + myWorkerTracker.getID(), myWorkerTracker.getLastFrame()));
+                System.out.println("LiDar" +  myWorkerTracker.getLastFrame().getTrackedObjectsList().getFirst().getId() + " crashed");
                 myWorkerTracker.statusDown();
                 sendBroadcast(new CrashedBroadcast("LiDar"+ myWorkerTracker.getID()));// send a broadcast that the LiDar crashed
                 terminate();
@@ -89,7 +90,6 @@ public class LiDarService extends MicroService
             if (LiDarDataBase.getInstance().getCloudPoints().get(last).getTime() <= time - myWorkerTracker.getFrequency())
             {
                 myWorkerTracker.statusDown();
-                System.out.println("LiDarService is down at time:" + (tick.getTick()));
                 sendBroadcast(new TerminatedBroadcast(((Integer)myWorkerTracker.getID()).toString()));
                 terminate();
             }
@@ -110,6 +110,7 @@ public class LiDarService extends MicroService
         });
 
         subscribeBroadcast(CrashedBroadcast.class, (CrashedBroadcast crash) -> {
+            sendEvent(new LastLiDarFrameEvent("LiDarWorkerTracker" + myWorkerTracker.getID(), myWorkerTracker.getLastFrame()));
             terminate();
         });
 

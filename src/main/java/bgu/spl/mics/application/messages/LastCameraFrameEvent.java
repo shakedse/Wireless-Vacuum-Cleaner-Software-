@@ -2,7 +2,7 @@ package bgu.spl.mics.application.messages;
 
 import bgu.spl.mics.*;
 
-public class LastCameraFrameEvent<DetectedObjectsEvent> implements Event
+public class LastCameraFrameEvent<DetectedObjectsEvent> implements Event<DetectedObjectsEvent>
 {
     private String CameraId;
     private DetectedObjectsEvent lastFrame;

@@ -197,7 +197,6 @@ public class GurionRockRunner {
         } 
         catch (IOException e) {
             e.printStackTrace();
-        
         }
     }
 }

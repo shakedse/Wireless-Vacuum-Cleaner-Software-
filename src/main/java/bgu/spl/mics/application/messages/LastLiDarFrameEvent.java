@@ -2,7 +2,7 @@ package bgu.spl.mics.application.messages;
 
 import bgu.spl.mics.*;
 
-public class LastLiDarFrameEvent<TrackedObjectsEvent> implements Event
+public class LastLiDarFrameEvent<TrackedObjectsEvent> implements Event<TrackedObjectsEvent>
 {
     private String LidarWorker;
     private TrackedObjectsEvent lastFrame;

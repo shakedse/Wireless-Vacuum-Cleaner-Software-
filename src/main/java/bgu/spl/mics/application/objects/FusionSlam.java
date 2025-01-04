@@ -82,6 +82,7 @@ public class FusionSlam {
 
     public void addLastFrameLidar(String Lidar, TrackedObjectsEvent lastFrame)
     {
+        System.out.println(lastFrame.getTrackedObjectsList().getFirst().getId());
         LiDarLastFrames.putIfAbsent(Lidar, lastFrame);
     }
 
@@ -216,6 +217,7 @@ public class FusionSlam {
             this.statistics = statistics;
         }
     }
+
     public void errorOutPut(CrashedBroadcast crashed)
     {
         System.out.println("create output");

@@ -2,7 +2,6 @@ package bgu.spl.mics.application.services;
 import bgu.spl.mics.application.messages.CrashedBroadcast;
 import bgu.spl.mics.application.messages.DetectedObjectsEvent;
 import bgu.spl.mics.application.messages.LastCameraFrameEvent;
-import bgu.spl.mics.application.messages.LastLiDarFrameEvent;
 import bgu.spl.mics.application.messages.TerminatedBroadcast;
 import bgu.spl.mics.application.messages.TickBroadcast;
 import bgu.spl.mics.application.objects.*;
@@ -88,6 +87,7 @@ public class CameraService extends MicroService
         });
 
         subscribeBroadcast(CrashedBroadcast.class ,(CrashedBroadcast crashed) ->{
+            sendEvent(new LastCameraFrameEvent(camera.getStringId(), camera.gerLastFrame()));
             terminate();
         });
 
