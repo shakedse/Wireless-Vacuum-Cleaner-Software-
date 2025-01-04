@@ -67,19 +67,52 @@ public class MessageBusImpl implements MessageBus
 	}
 	// A ms entering a queue of a certin event class
 	@Override
-	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
-		eventSubscribers.computeIfAbsent(type, subscribersQueue -> new LinkedBlockingQueue<MicroService>()).add(m);// Adding an event to the queue if doesnt exists
+	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) 
+	{/*
+		@pre: type != null, m != null
+		@post: if the event type is not in the eventSubscribers map, add it
+		@post: add the microservice to the event queue
+		@param: type - the event type
+		@param: m - the microservice to add to the queue
+		@return: void
+		*/
+		
+		eventSubscribers.computeIfAbsent(type, subscribersQueue -> new LinkedBlockingQueue<MicroService>());
+		if (!eventSubscribers.get(type).contains(m)) 
+		{
+            eventSubscribers.get(type).add(m);
+        }
 	}
 
 	@Override
 	public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) 
 	{
-		broadcastSubscribers.computeIfAbsent(type, subscribersQueue -> new LinkedBlockingQueue<MicroService>()).add(m);// Adding an event to the queue if doesnt exists
+		/*
+		 * @pre: type != null, m != null
+		 * @post: if the broadcast type is not in the broadcastSubscribers map, add it
+		 * @post: add the microservice to the broadcast queue
+		 * @param: type - the broadcast type
+		 * @param: m - the microservice to add to the queue
+		 * @return: void
+		 */
+		broadcastSubscribers.computeIfAbsent(type, subscribersQueue -> new LinkedBlockingQueue<MicroService>());
+		if (!broadcastSubscribers.get(type).contains(m)) 
+		{
+            broadcastSubscribers.get(type).add(m);
+        }
 	}
 
 	@Override
 	public <T> void complete(Event<T> e, T result) 
 	{
+		/*
+		@pre: e != null, result != null
+		@post: resolve the future of the event
+		@param: e - the event to resolve
+		@param: result - the result to resolve the event with
+		@return: void
+
+		*/
 		Future<T> future = (Future<T>)EventAndFuture.get(e);
 		if (future != null) {
 			future.resolve(result);
@@ -89,6 +122,12 @@ public class MessageBusImpl implements MessageBus
 	@Override
 	public void sendBroadcast(Broadcast b) 
 	{
+		/*
+		 * @pre: b != null
+		 * @post: add the broadcast to the queues of the microservices that are subscribed to it
+		 * @param: b - the broadcast to send
+		 * @return: void
+		 */
 		synchronized (messageQueue){
 			BlockingQueue<MicroService> curr = broadcastSubscribers.get(b.getClass());
 			synchronized (broadcastSubscribers) //synchronized that no ms will be added to the queue
@@ -108,7 +147,14 @@ public class MessageBusImpl implements MessageBus
 	}
 
 	@Override
-	public <T> Future<T> sendEvent(Event<T> e) {
+	public <T> Future<T> sendEvent(Event<T> e) 
+	{
+		/*
+		 * @pre: e != null
+		 * @post: add the event to the queue of the microservice that is subscribed to it
+		 * @param: e - the event to send
+		 * @return: Future<T> - the future of the event
+		 */
 		BlockingQueue<MicroService> curr = eventSubscribers.get(e.getClass());
 		if (curr == null)
 			return null;
@@ -130,13 +176,26 @@ public class MessageBusImpl implements MessageBus
 	@Override
 	public void register(MicroService m)
 	// a new microservice registers to a new queue
-	{
+	{/*
+		@pre: m != null
+		@post: add the microservice to the messageQueue
+		@param: m - the microservice to register
+		@return: void
+		*/
 		messageQueue.putIfAbsent(m, new LinkedBlockingQueue<Message>());
 	}
 
 	@Override
 	public void unregister(MicroService m) 
 	{
+		/*
+		 * @pre: m != null
+		 * @post: remove the microservice from the messageQueue
+		 * @post: remove the microservice from the eventSubscribers
+		 * @post: remove the microservice from the broadcastSubscribers
+		 * @param: m - the microservice to unregister
+		 * @return: void
+		 */
 		if(messageQueue.containsKey(m))
 		{
 			BlockingQueue<Message> curr = messageQueue.get(m);
@@ -167,6 +226,12 @@ public class MessageBusImpl implements MessageBus
 	@Override
 	public Message awaitMessage(MicroService m) throws InterruptedException
 	{
+		/*
+		 * @pre: m != null
+		 * @post: if the microservice hasn't register, throw an exception
+		 * @param: m - the microservice to get the message from
+		 * @return: Message - the message that the microservice got
+		 */
 		if(!messageQueue.containsKey(m))
 			throw new InterruptedException("This MicroService hasn't register");
 		try

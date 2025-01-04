@@ -75,7 +75,14 @@ public class Camera {
     }
 
     // returns the objects captured list at a certin time tick
-    public LinkedList<DetectedObject> getDetectedObjectsAtTick(int tick) {
+    public LinkedList<DetectedObject> getDetectedObjectsAtTick(int tick) 
+    { /*
+        @pre: tick > 0
+        @post: return the detected objects at the tick
+        @inv: in every tick, the camera will return the detected objects at the tick
+        @param: tick - the tick to get the detected objects at
+        @return: LinkedList<DetectedObject> - the detected objects at the tick
+        */
         LinkedList<DetectedObject> DetectedObjectsAtTick = new LinkedList<DetectedObject>();
         for (StampedDetectedObjects obj : stampDetectedObjects) {
             if (obj.getTime() == tick) {
@@ -87,7 +94,15 @@ public class Camera {
     }
 
     // returns the event that matches the certin tick
-    public DetectedObjectsEvent activateTick(int tick) {
+    public DetectedObjectsEvent activateTick(int tick) 
+    {
+        /*@pre: tick > 0
+        * @post: if the camera is in error status, return an event with the error detected object
+        * @post: if the camera is not in error status, return an event with the detected objects at the tick
+        * @inv: in every tick, the camera will return an event with the detected objects at the tick
+        * @param: tick - the tick to activate
+        * @return: DetectedObjectsEvent - the event that matches the tick
+         */
         LinkedList<DetectedObject> detectedObjects = this.getDetectedObjectsAtTick(tick);
         if (!detectedObjects.isEmpty()) {
             // checking if we got a detected objects event that is error
