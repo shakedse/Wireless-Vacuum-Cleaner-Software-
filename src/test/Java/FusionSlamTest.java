@@ -113,7 +113,7 @@ public class FusionSlamTest {
         chairCoordinates.add(firstCloudPoint);
         chairCoordinates.add(secondCloudPoint);
         TrackedObject trackedObject = new TrackedObject("chair", 1, "Test Object: chair", chairCoordinates);
-        Pose pose = new Pose(1, 4, 2, 1);
+        Pose pose = new Pose(1, 4, 50, 1);
         fusionSlam.addPose(pose);
 
         // Act
@@ -143,7 +143,7 @@ public class FusionSlamTest {
         chairCoordinates.add(forthCloudPoint);
         TrackedObject trackedObjectDoor = new TrackedObject("door", 2, "Test Object: door", doorCoordinates);
 
-        Pose pose = new Pose(0, 5, 3, 2);
+        Pose pose = new Pose(0, 5, 30, 2);
         fusionSlam.addPose(pose);
 
         // Act
@@ -159,5 +159,42 @@ public class FusionSlamTest {
         addedLandmark = fusionSlam.getLandMarks().get(1);
         assertEquals(trackedObjectDoor.getId(), addedLandmark.getID());
         assertEquals(trackedObjectDoor.getDescription(), addedLandmark.getDescription());
+    }
+
+    @Test
+    /*
+     * Pose at time 1 = 1, 4, 50
+     * Pose at time 2 = 0, 5, 30
+     * 
+     * angle in rad,sin,cos: 
+     * pose 1 = 0.8726 sin = 0.766 cos = 0.649
+     * pose 2 = 0.5236 sin = 0.5 cos = 0.866
+     * 
+     * chair's first LandMark:
+     * at pose 1: Local x = 1, y = 2
+     *                Global x = (0.649*1) - (0.766*2) + 1 = 0.117
+     *                       y = (0.766*1) - (0.649*2) + 4 = 3.468
+     *
+     * at pose 2: Local x = 2, y = 3
+     *                Global x = (0.866*2) - (0.5*3) + 0 = 0.232
+     *                       y = (0.5*2) - (0.866*3) + 5 = 3.402
+     * 
+     * avg = x = 0.2045, y = 3.435
+     * 
+     */
+    public void testLocalToGlobalCoordinate() {
+        // Arrange
+
+        CloudPoint ChairCloudPoint1 = fusionSlam.getLandMarks().get(0).getCloudPoints().get(0);
+        CloudPoint DoorCloudPoint1 = fusionSlam.getLandMarks().get(0).getCloudPoints().get(0);
+        
+        double expectedChairX = 0.2045;
+        double expectedChiarY = 3.435; 
+
+
+        // Assert
+        assertEquals(expectedChairX, ChairCloudPoint1.getX());
+        assertEquals(expectedChiarY, ChairCloudPoint1.getY());
+
     }
 }
