@@ -20,10 +20,8 @@ public class Future<T>
 	 */
 	public Future() 
 	{
-		//TODO: implement this
 		isDone=false;
 		result=null;
-
 	}
 	
 	/**
@@ -36,7 +34,6 @@ public class Future<T>
      */
 	public synchronized T get() //this method is synchronized because we dont want 2 theards trying to get at the same time
 	{
-		//TODO: implement this.
 		while (!isDone) //waiting for a result
 		{
 			try 
@@ -56,7 +53,6 @@ public class Future<T>
      */
 	public synchronized void resolve (T result) //this method is synchronized because we dont want 2 theards trying to put a value in result at the same time
 	{
-		//TODO: implement this.
 		this.result = result;
 		isDone = true;
 		notifyAll();
@@ -67,7 +63,6 @@ public class Future<T>
      */
 	public boolean isDone() 
 	{
-		//TODO: implement this.
 		return isDone;
 	}
 	
@@ -84,7 +79,6 @@ public class Future<T>
      */
 	public synchronized T get(long timeout, TimeUnit unit) 
 	{
-		//TODO: implement this.
 		long waitingTime = unit.toMillis(timeout);//converting long to milis
 		long endTime = System.currentTimeMillis() + waitingTime;
 	

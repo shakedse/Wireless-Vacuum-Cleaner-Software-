@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -15,7 +14,6 @@ import bgu.spl.mics.application.GurionRockRunner.SystemData;
 import bgu.spl.mics.application.messages.CrashedBroadcast;
 import bgu.spl.mics.application.messages.DetectedObjectsEvent;
 import bgu.spl.mics.application.messages.TrackedObjectsEvent;
-
 
 /**
  * Manages the fusion of sensor data for simultaneous localization and mapping
@@ -33,16 +31,11 @@ public class FusionSlam {
     private LinkedList<Pose> poses;
     private LinkedList<TrackedObject> waitingTrackedObjects;
 
-    
     private FusionSlam() {
         landMarks = new LinkedList<LandMark>();
         poses = new LinkedList<Pose>();
         waitingTrackedObjects = new LinkedList<TrackedObject>();
 
-    }
-
-    public LinkedList<TrackedObject> getWaitingObjects() {
-        return waitingTrackedObjects;
     }
 
     private static class FusionSlamHolder {
@@ -56,13 +49,28 @@ public class FusionSlam {
         }
     }
 
+    // get instance
+    public static FusionSlam getInstance() {
+        return FusionSlamHolder.getInstance();
+    }
+
+    // getters
+    public LinkedList<LandMark> getLandMarks() {
+        return landMarks;
+    }
+
+    public LinkedList<Pose> getPoses() {
+        return poses;
+    }
+    
+    public LinkedList<TrackedObject> getWaitingObjects() {
+        return waitingTrackedObjects;
+    }
+
     public void addPose(Pose pose) {
         if (!poses.contains(pose))
             poses.add(pose);
     }
-
-
-    
 
     public void addNewLandMark(TrackedObject trackedObject) 
     {
@@ -96,7 +104,6 @@ public class FusionSlam {
         {
             updateOldLandMark(trackedObject);
         }
-            
         else
         {
             addNewLandMark(trackedObject);
@@ -117,7 +124,7 @@ public class FusionSlam {
             }
         }
 
-        for (LandMark landMark : landMarks) {
+        for (LandMark landMark : landMarks) { // updating each Landmark to the average of the new and the old cloudpoints
             if (landMark.getID().equals(trackedObject.getId())) {
                 landMark.setAvgCloudPoint(updatedCloudPoints);
             }
@@ -139,27 +146,11 @@ public class FusionSlam {
 
         // Apply the rotation and translation
         float x = cosYaw * (float) CloudPoint.getX() - sinYaw * (float) CloudPoint.getY() + pose.getX();
-        float y = (float) (sinYaw * CloudPoint.getX() + cosYaw * CloudPoint.getY() + pose.getY());
+        float y = sinYaw * (float) CloudPoint.getX() + cosYaw * (float) CloudPoint.getY() + pose.getY();
 
         CloudPoint globalCloudPoint = new CloudPoint(x, y);
         return globalCloudPoint;
     }
-
-
-    // get instance
-    public static FusionSlam getInstance() {
-        return FusionSlamHolder.getInstance();
-    }
-
-    // getters
-    public LinkedList<LandMark> getLandMarks() {
-        return landMarks;
-    }
-
-    public LinkedList<Pose> getPoses() {
-        return poses;
-    }
-
 
     public void buildOutput()
     {

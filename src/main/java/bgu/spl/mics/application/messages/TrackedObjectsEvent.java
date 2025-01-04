@@ -22,6 +22,11 @@ public class TrackedObjectsEvent implements Event<Boolean> {
         this.TrackedObjectsList.add(trackedObject);
     }
 
+    public String getID()
+    {
+        return ID;
+    }
+    
     public int getTime() {
         return time;
     }

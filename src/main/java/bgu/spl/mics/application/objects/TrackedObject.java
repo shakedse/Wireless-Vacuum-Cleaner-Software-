@@ -1,7 +1,6 @@
 package bgu.spl.mics.application.objects;
 
 import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Represents an object tracked by the LiDAR.
@@ -10,7 +9,6 @@ import java.util.List;
  */
 public class TrackedObject 
 {
-    // TODO: Define fields and methods.
     //fields:
     private String id;
     private int Time;

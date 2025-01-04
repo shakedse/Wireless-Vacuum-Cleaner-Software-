@@ -24,7 +24,6 @@ public class PoseService extends MicroService {
     {
         super("PoseService");
         this.myPose = gpsimu;
-        // TODO Implement this
     }
 
     /**

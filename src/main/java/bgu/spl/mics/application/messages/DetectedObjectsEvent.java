@@ -1,9 +1,6 @@
 package bgu.spl.mics.application.messages;
 
 import java.util.LinkedList;
-import java.util.List;
-
-
 import bgu.spl.mics.application.objects.*;
 import bgu.spl.mics.*;
 
@@ -20,6 +17,7 @@ public class DetectedObjectsEvent implements Event<Boolean> {
         this.cameraID=cameraID;
         this.isRemoved = false;
     }
+    
     public boolean isRemoved()
     {
         return isRemoved;
@@ -34,10 +32,12 @@ public class DetectedObjectsEvent implements Event<Boolean> {
     {
         return detectedTime;
     }
+
     public int getCameraID()
     {
         return cameraID;
     }
+
     public LinkedList<DetectedObject> getDetectedObjects()
     {
         return detectedObjects;

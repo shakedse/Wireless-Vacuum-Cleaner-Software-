@@ -12,8 +12,6 @@ import bgu.spl.mics.application.messages.TrackedObjectsEvent;
  */
 public class LiDarWorkerTracker
 {
-
-    // TODO: Define fields and methods.
     //FIELDS:
     private int id;
     private int frequency;
@@ -84,6 +82,7 @@ public class LiDarWorkerTracker
         return null;
     }
 
+    // converting detected to tracked objects
     public TrackedObjectsEvent convertDetectedToTracked(DetectedObjectsEvent detectedObjectsEvent)
     {
         TrackedObjectsEvent trackedObjectsEvent = new TrackedObjectsEvent(((Integer)this.getID()).toString(), detectedObjectsEvent.getdetectedTime());
@@ -107,6 +106,7 @@ public class LiDarWorkerTracker
         return trackedObjectsEvent;
     }
 
+    // checking for errors in the tracked objects at time time
     public void checkForErrors(int time)
     {
         LiDarDataBase dataBase = LiDarDataBase.getInstance();

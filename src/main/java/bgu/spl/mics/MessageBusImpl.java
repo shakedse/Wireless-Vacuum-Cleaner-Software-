@@ -4,9 +4,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import bgu.spl.mics.application.messages.DetectedObjectsEvent;
-import bgu.spl.mics.application.objects.Camera;
-import bgu.spl.mics.application.objects.LiDarWorkerTracker;
 
 /**
  * The {@link MessageBusImpl class is the implementation of the MessageBus
@@ -24,9 +21,6 @@ public class MessageBusImpl implements MessageBus
 	private ConcurrentHashMap<Class<? extends Event<?>>, BlockingQueue<MicroService>> eventSubscribers;// map for event subscribers
 	private ConcurrentHashMap<Class<? extends Broadcast>, BlockingQueue<MicroService>> broadcastSubscribers;// map for broadcasts
 	private ConcurrentHashMap<Event<?>,Future<?>> EventAndFuture;
-
-	private ConcurrentHashMap<Camera, DetectedObjectsEvent> camerasLastFrames;
-    private ConcurrentHashMap<LiDarWorkerTracker, DetectedObjectsEvent> LiDarLastFrames;
 	
 	private MessageBusImpl() //A private constructor
 	{
@@ -34,9 +28,6 @@ public class MessageBusImpl implements MessageBus
 		broadcastSubscribers = new ConcurrentHashMap<>();
         messageQueue = new ConcurrentHashMap<>();
         EventAndFuture = new ConcurrentHashMap<>();
-
-		camerasLastFrames = new ConcurrentHashMap<>();
-        LiDarLastFrames = new ConcurrentHashMap<>();
     }
 	//getters
 	public ConcurrentHashMap<MicroService, BlockingQueue<Message>> getMessageQueue() 
@@ -111,7 +102,6 @@ public class MessageBusImpl implements MessageBus
 		@param: e - the event to resolve
 		@param: result - the result to resolve the event with
 		@return: void
-
 		*/
 		Future<T> future = (Future<T>)EventAndFuture.get(e);
 		if (future != null) {
@@ -204,7 +194,6 @@ public class MessageBusImpl implements MessageBus
 				while(!curr.isEmpty())
 					{
 						Message toDelete = curr.poll();
-						//EventAndFuture.get(toDelete).resolve(null);
 						EventAndFuture.remove(toDelete);
 					}
 				messageQueue.remove(m);

@@ -1,6 +1,5 @@
 package bgu.spl.mics.application.objects;
 
-import java.util.LinkedList;
 import java.util.List;
 /**
  * Represents a group of cloud points corresponding to a specific timestamp.
@@ -27,6 +26,7 @@ public class StampedCloudPoints {
     {
         return time;
     }
+    
     public List<List<Double>> getCloudPoints()
     {
         return cloudPoints;

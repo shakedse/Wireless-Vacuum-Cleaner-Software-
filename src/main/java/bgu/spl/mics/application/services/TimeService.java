@@ -1,11 +1,8 @@
 package bgu.spl.mics.application.services;
 
-import bgu.spl.mics.Broadcast;
-import bgu.spl.mics.MessageBusImpl;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.TerminatedBroadcast;
 import bgu.spl.mics.application.messages.TickBroadcast;
-import bgu.spl.mics.application.objects.FusionSlam;
 import bgu.spl.mics.application.objects.StatisticalFolder;
 
 /**
@@ -25,7 +22,6 @@ public class TimeService extends MicroService {
 
     public TimeService(int TickTime, int Duration) {
         super("TimeService");
-        // TODO Implement this
         this.tickTime = TickTime;
         this.duration = Duration;
     }

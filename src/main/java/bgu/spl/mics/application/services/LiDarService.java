@@ -54,7 +54,6 @@ public class LiDarService extends MicroService
      */
     @Override
     protected void initialize() {
-        // TODO Implement this
         subscribeBroadcast(TickBroadcast.class, (TickBroadcast tick) -> {
             time = tick.getTick();
 

@@ -3,7 +3,6 @@ package bgu.spl.mics.application.objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import bgu.spl.mics.MessageBusImpl;
 import bgu.spl.mics.application.messages.DetectedObjectsEvent;
 import bgu.spl.mics.application.messages.TrackedObjectsEvent;
 

@@ -33,7 +33,6 @@ public class GurionRockRunner {
      * @param args Command-line arguments. The first argument is expected to be the path to the configuration file.
      */
     
-    
     public static void main(String[] args) 
     {        
         // TODO: Parse configuration file.

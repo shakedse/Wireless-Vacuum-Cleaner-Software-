@@ -8,14 +8,12 @@ import java.util.Map;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import bgu.spl.mics.application.messages.DetectedObjectsEvent;
-import bgu.spl.mics.application.messages.TrackedObjectsEvent;
 
 /**
  * Represents a camera sensor on the robot.
  * Responsible for detecting objects in the environment.
  */
 public class Camera {
-    // TODO: Define fields and methods.
     // fields:
     private int id;
     private int frequency;
@@ -30,6 +28,7 @@ public class Camera {
         this.status = STATUS.UP;
         this.camera_key = camera_key;
     }
+
     public Camera(int id, int frequency, String camera_key,  LinkedList<StampedDetectedObjects> stampDetectedObjects) {
         this.id = id;
         this.frequency = frequency;
@@ -37,15 +36,19 @@ public class Camera {
         this.camera_key = camera_key;
         this.stampDetectedObjects = stampDetectedObjects;
     }
-    public int getFrequency() {
+
+    public int getFrequency() 
+    {
         return frequency;
     }
 
-    public int getID() {
+    public int getID() 
+    {
         return id;
     }
 
-    public STATUS getStatus() {
+    public STATUS getStatus() 
+    {
         return status;
     }
 
@@ -54,7 +57,8 @@ public class Camera {
         return camera_key;
     }
 
-    public void statusDown() {
+    public void statusDown() 
+    {
         this.status = STATUS.DOWN;
     }
 

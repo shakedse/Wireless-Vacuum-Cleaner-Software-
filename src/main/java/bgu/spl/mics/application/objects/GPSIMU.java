@@ -1,7 +1,6 @@
 package bgu.spl.mics.application.objects;
 
 import java.io.FileReader;
-import java.util.LinkedList;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.gson.Gson;
@@ -12,7 +11,6 @@ import com.google.gson.Gson;
  */
 public class GPSIMU 
 {
-    // TODO: Define fields and methods.
     private int currentTick;
     private STATUS status;
     private ConcurrentHashMap<Integer, Pose> PoseList;
