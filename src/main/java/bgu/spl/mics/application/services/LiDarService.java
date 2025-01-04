@@ -2,7 +2,6 @@ package bgu.spl.mics.application.services;
 
 import bgu.spl.mics.application.messages.CrashedBroadcast;
 import bgu.spl.mics.application.messages.DetectedObjectsEvent;
-import bgu.spl.mics.application.messages.LastLiDarFrameEvent;
 import bgu.spl.mics.application.messages.TerminatedBroadcast;
 import bgu.spl.mics.application.messages.TickBroadcast;
 import bgu.spl.mics.application.messages.TrackedObjectsEvent;
@@ -63,7 +62,6 @@ public class LiDarService extends MicroService
 
             if(myWorkerTracker.getStatus() == STATUS.ERROR) //if the camera crashed - terminate
             {
-                sendEvent(new LastLiDarFrameEvent("LiDarWorkerTracker" + myWorkerTracker.getID(), myWorkerTracker.gerLastFrame()));
                 myWorkerTracker.statusDown();
                 sendBroadcast(new CrashedBroadcast("LiDar"+ myWorkerTracker.getID()));// send a broadcast that the LiDar crashed
                 terminate();
@@ -89,7 +87,6 @@ public class LiDarService extends MicroService
             if (LiDarDataBase.getInstance().getCloudPoints().get(last).getTime() <= time - myWorkerTracker.getFrequency())
             {
                 myWorkerTracker.statusDown();
-                System.out.println("LiDarService is down at time:" + (tick.getTick()));
                 sendBroadcast(new TerminatedBroadcast(((Integer)myWorkerTracker.getID()).toString()));
                 terminate();
             }

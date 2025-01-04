@@ -65,6 +65,7 @@ public class Camera {
 
     public void setLastFrame(DetectedObjectsEvent lastFrame)
     {
+        StatisticalFolder.getInstance().addLastFrameCamera(camera_key, lastFrame);
         this.lastFrame = lastFrame;
     }
 

@@ -1,8 +1,6 @@
 package bgu.spl.mics.application.services;
 import bgu.spl.mics.application.messages.CrashedBroadcast;
 import bgu.spl.mics.application.messages.DetectedObjectsEvent;
-import bgu.spl.mics.application.messages.LastCameraFrameEvent;
-import bgu.spl.mics.application.messages.LastLiDarFrameEvent;
 import bgu.spl.mics.application.messages.TerminatedBroadcast;
 import bgu.spl.mics.application.messages.TickBroadcast;
 import bgu.spl.mics.application.objects.*;
@@ -52,7 +50,6 @@ public class CameraService extends MicroService
 
             if(camera.getStatus() == STATUS.ERROR || CheckForError != null) //if the camera crashed - terminate
             {
-                sendEvent(new LastCameraFrameEvent(camera.getStringId(), camera.gerLastFrame()));
                 camera.statusDown();
                 String description = CheckForError.getDescription();
                 sendBroadcast(new CrashedBroadcast("Camera" + camera.getID() + ", because of: " + description));
@@ -71,7 +68,6 @@ public class CameraService extends MicroService
                 if (camera.getList().get(last).getTime() <= time - camera.getFrequency())
                 {
                     camera.statusDown();
-                    System.out.println("CameraService is down at time:" + (tick.getTick()));
                     sendBroadcast(new TerminatedBroadcast(((Integer)camera.getID()).toString()));
                     terminate();
                 }

@@ -16,11 +16,13 @@ public class StampedCloudPoints {
         this.id=id;
         this.time=time;
         this.cloudPoints = cloudPoints;
-        }
+    }
+
     public String getID()
     {
         return id;
     }
+    
     public int getTime()
     {
         return time;

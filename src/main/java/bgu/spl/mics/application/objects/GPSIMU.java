@@ -49,7 +49,6 @@ public class GPSIMU
                 lastTick = pose.getTime();
             
         }
-        System.out.println("Pose LastTick: " + lastTick);
     }
 
     public static GPSIMU getInstance()

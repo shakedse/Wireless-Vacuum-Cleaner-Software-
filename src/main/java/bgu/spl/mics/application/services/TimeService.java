@@ -52,7 +52,7 @@ public class TimeService extends MicroService {
             {
                 Thread.currentThread().interrupt();
             }
-            if (FusionSlam.getInstance().getEarlyFinish()){
+            if (StatisticalFolder.getInstance().getEarlyFinish()){
                 //האם להוציא פה את ההאוטפוט?
                 sendBroadcast(new TerminatedBroadcast("TimeService")); 
                 terminate();

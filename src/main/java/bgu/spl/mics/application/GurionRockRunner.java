@@ -32,89 +32,6 @@ public class GurionRockRunner {
      *
      * @param args Command-line arguments. The first argument is expected to be the path to the configuration file.
      */
-
-    public class configurationFileType {
-        private CamerasConfig Cameras;
-        private LiDarConfig LiDarWorkers;
-        private String poseJsonFile;
-        private int TickTime;
-        private int Duration;
-    
-        public configurationFileType(CamerasConfig Cameras, LiDarConfig LiDarWorkers, String poseJsonFile, int TickTime, int Duration) {
-            this.Cameras = Cameras;
-            this.LiDarWorkers = LiDarWorkers;
-            this.poseJsonFile = poseJsonFile;
-            this.TickTime = TickTime;
-            this.Duration = Duration;
-        }
-    
-        public CamerasConfig getCameras() {
-            return Cameras;
-        }
-    
-        public LiDarConfig getLiDarWorkers() {
-            return LiDarWorkers;
-        }
-    
-        public String getPoseJsonFile() {
-            return poseJsonFile;
-        }
-    
-        public int getTickTime() {
-            return TickTime;
-        }
-    
-        public int getDuration() {
-            return Duration;
-        }
-    }
-    
-    class CamerasConfig {
-        private List<Camera> CamerasConfigurations;
-        private String camera_datas_path;
-
-        public List<Camera> getCamerasConfigurations() {
-            return CamerasConfigurations;
-        }
-    
-        public String getCameraDatasPath() {
-            return camera_datas_path;
-        }
-    }
-    
-    class LiDarConfig {
-        private List<LiDarWorkerTracker> LidarConfigurations;
-        private String lidars_data_path;
-    
-        public List<LiDarWorkerTracker> getLidarConfigurations() {
-            return LidarConfigurations;
-        }
-    
-        public String getLidarsDataPath() {
-            return lidars_data_path;
-        }
-    }
-    
-    public static class SystemData {
-        private int systemRuntime;
-        private int numDetectedObjects;
-        private int numTrackedObjects;
-        private int numLandmarks;
-        private Map<String, LandMark> landMarks;
-
-        // Getters and setters (or public fields for simplicity)
-        public SystemData(AtomicInteger systemRuntime, AtomicInteger numDetectedObjects, AtomicInteger numTrackedObjects, AtomicInteger numLandmarks, Map<String, LandMark> landMarks) {
-            this.systemRuntime = systemRuntime.get();
-            this.numDetectedObjects = numDetectedObjects.get();
-            this.numTrackedObjects = numTrackedObjects.get();
-            this.numLandmarks = numLandmarks.get();
-            this.landMarks = landMarks;
-        }
-
-        public void addLandmark(String key, LandMark landmark) {
-            this.landMarks.put(key, landmark);
-        }
-    }
     
     
     public static void main(String[] args) 
@@ -197,7 +114,90 @@ public class GurionRockRunner {
         } 
         catch (IOException e) {
             e.printStackTrace();
-        
+        }
+    }
+
+    // Class for parsing
+    public class configurationFileType {
+        private CamerasConfig Cameras;
+        private LiDarConfig LiDarWorkers;
+        private String poseJsonFile;
+        private int TickTime;
+        private int Duration;
+    
+        public configurationFileType(CamerasConfig Cameras, LiDarConfig LiDarWorkers, String poseJsonFile, int TickTime, int Duration) {
+            this.Cameras = Cameras;
+            this.LiDarWorkers = LiDarWorkers;
+            this.poseJsonFile = poseJsonFile;
+            this.TickTime = TickTime;
+            this.Duration = Duration;
+        }
+    
+        public CamerasConfig getCameras() {
+            return Cameras;
+        }
+    
+        public LiDarConfig getLiDarWorkers() {
+            return LiDarWorkers;
+        }
+    
+        public String getPoseJsonFile() {
+            return poseJsonFile;
+        }
+    
+        public int getTickTime() {
+            return TickTime;
+        }
+    
+        public int getDuration() {
+            return Duration;
+        }
+    }
+    
+    class CamerasConfig {
+        private List<Camera> CamerasConfigurations;
+        private String camera_datas_path;
+
+        public List<Camera> getCamerasConfigurations() {
+            return CamerasConfigurations;
+        }
+    
+        public String getCameraDatasPath() {
+            return camera_datas_path;
+        }
+    }
+    
+    class LiDarConfig {
+        private List<LiDarWorkerTracker> LidarConfigurations;
+        private String lidars_data_path;
+    
+        public List<LiDarWorkerTracker> getLidarConfigurations() {
+            return LidarConfigurations;
+        }
+    
+        public String getLidarsDataPath() {
+            return lidars_data_path;
+        }
+    }
+    
+    public static class SystemData {
+        private int systemRuntime;
+        private int numDetectedObjects;
+        private int numTrackedObjects;
+        private int numLandmarks;
+        private Map<String, LandMark> landMarks;
+
+        // Getters and setters (or public fields for simplicity)
+        public SystemData(AtomicInteger systemRuntime, AtomicInteger numDetectedObjects, AtomicInteger numTrackedObjects, AtomicInteger numLandmarks, Map<String, LandMark> landMarks) {
+            this.systemRuntime = systemRuntime.get();
+            this.numDetectedObjects = numDetectedObjects.get();
+            this.numTrackedObjects = numTrackedObjects.get();
+            this.numLandmarks = numLandmarks.get();
+            this.landMarks = landMarks;
+        }
+
+        public void addLandmark(String key, LandMark landmark) {
+            this.landMarks.put(key, landmark);
         }
     }
 }

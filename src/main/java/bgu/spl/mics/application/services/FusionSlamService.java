@@ -1,20 +1,12 @@
 package bgu.spl.mics.application.services;
 import bgu.spl.mics.application.messages.CrashedBroadcast;
-import bgu.spl.mics.application.messages.DetectedObjectsEvent;
-import bgu.spl.mics.application.messages.LastCameraFrameEvent;
-import bgu.spl.mics.application.messages.LastLiDarFrameEvent;
 import bgu.spl.mics.application.messages.PoseEvent;
 import bgu.spl.mics.application.messages.TerminatedBroadcast;
 import bgu.spl.mics.application.messages.TickBroadcast;
 import bgu.spl.mics.application.messages.TrackedObjectsEvent;
 import bgu.spl.mics.application.objects.*;
 
-import com.google.gson.Gson;
-import java.lang.reflect.Type;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.GsonBuilder;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -80,14 +72,14 @@ public class FusionSlamService extends MicroService {
         
     //PoseEvent
         subscribeEvent(PoseEvent.class ,(PoseEvent pose) ->{
-            fusionSlam.getInstance().addPose((Pose)pose.getPose());//adding the current pose if it is not present in the poses list
+            fusionSlam.addPose((Pose)pose.getPose());//adding the current pose if it is not present in the poses list
         });
         
     //TerminatedBroadcast
         subscribeBroadcast(TerminatedBroadcast.class ,(TerminatedBroadcast terminate) ->{
             if(terminate.getTerminatedID().equals("TimeService") )//if the terminated MS is timeService - terminate me too
             {
-                fusionSlam.setEarlyFinish();
+                StatisticalFolder.getInstance().setEarlyFinish();
                 sendBroadcast(new TerminatedBroadcast("fusionSlam"));//tell everyone that the camera terminated itself
                 terminate();
                 fusionSlam.buildOutput();
@@ -96,7 +88,7 @@ public class FusionSlamService extends MicroService {
                 System.out.println("the size of the message queue is: " + MessageBusImpl.getInstance().getMessageQueue().size());
                 if(MessageBusImpl.getInstance().getMessageQueue().size() <= 2)
                 {
-                    fusionSlam.setEarlyFinish();
+                    StatisticalFolder.getInstance().setEarlyFinish();
                     System.out.println("fusionSlam is down");
                     sendBroadcast(new TerminatedBroadcast("fusionSlam"));//tell everyone that the camera terminated itself
                     terminate();
@@ -107,17 +99,9 @@ public class FusionSlamService extends MicroService {
 
     //CrashedBroadcast
         subscribeBroadcast(CrashedBroadcast.class ,(CrashedBroadcast crashed) ->{
-            fusionSlam.setEarlyFinish();
+            StatisticalFolder.getInstance().setEarlyFinish();
             fusionSlam.errorOutPut(crashed);
             terminate();
-        });
-
-        subscribeEvent(LastCameraFrameEvent.class ,(LastCameraFrameEvent event) ->{
-            fusionSlam.addLastFrameCamera(event.getName(), (DetectedObjectsEvent)event.getLastFrame());
-        });
-
-        subscribeEvent(LastLiDarFrameEvent.class ,(LastLiDarFrameEvent event) ->{
-            fusionSlam.addLastFrameLidar(event.getName(), (TrackedObjectsEvent)event.getLastFrame());
         });
     }
 }
