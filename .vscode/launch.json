@@ -15,7 +15,7 @@
             "name": "GurionRockRunner",
             "request": "launch",
             "mainClass": "bgu.spl.mics.application.GurionRockRunner",
-            "args": ["configuration_file.json"], // Pass the path as an argument
+            "args": ["C:/Users/ron01/.vscode/newlast/SPL2////configuration_file.json"], // Pass the path as an argument
             "projectName": "spl225ass2"
         },
         {

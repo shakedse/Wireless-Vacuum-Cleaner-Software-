@@ -206,7 +206,7 @@ public class FusionSlam {
             Stats.addLandmark(landMark.getID(), landMark);
         }
         ErrorOutput toWrite = new ErrorOutput(crashed.getCrashedID(), StatisticalFolder.getInstance().getCamerasLastFrames(), StatisticalFolder.getInstance().getLiDarLastFrames(), poses, Stats);
-        try (FileWriter writer = new FileWriter("output.json")) {
+        try (FileWriter writer = new FileWriter("ERRORoutput.json")) {
             // Serialize Java objects to JSON file
             gson.toJson(toWrite, writer);
         }
